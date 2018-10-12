@@ -1,4 +1,4 @@
-package com.gopher.system.dao;
+package com.gopher.system.dao.mysql;
 
 import com.gopher.system.model.BaseModel;
 import com.gopher.system.model.Page;
