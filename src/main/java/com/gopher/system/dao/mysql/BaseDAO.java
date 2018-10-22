@@ -1,7 +1,7 @@
 package com.gopher.system.dao.mysql;
 
 import com.gopher.system.model.BaseModel;
-import com.gopher.system.model.Page;
+import com.gopher.system.util.Page;
 
 import java.io.Serializable;
 import java.util.List;

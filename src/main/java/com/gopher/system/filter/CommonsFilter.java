@@ -13,10 +13,8 @@ import java.util.Iterator;
 import java.util.Map;
 @WebFilter(urlPatterns = "/*" )
 public class CommonsFilter implements Filter {
-
     private final Logger logger = LoggerFactory.getLogger("[PARAM IN]");
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
         HttpServletResponse httpResponse = (HttpServletResponse) response;
         httpResponse.setHeader("Access-Control-Allow-Origin", "*");
         httpResponse.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");

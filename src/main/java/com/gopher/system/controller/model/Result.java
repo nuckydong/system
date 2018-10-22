@@ -5,6 +5,23 @@ public class Result {
     private String message;
     private boolean success= true;
     private Object data;
+    
+    public Result(){
+    	this.code = 0;
+    	this.message = "请求成功";
+    }
+    
+    public Result(Object data){
+    	this.code = 0;
+    	this.message = "请求成功";
+    	this.data = data;
+    }
+    
+    public Result(int code,String message,boolean success){
+    	this.code = code;
+    	this.message = message;
+    	this.success = success;
+    }
 
     public int getCode() {
         return code;
