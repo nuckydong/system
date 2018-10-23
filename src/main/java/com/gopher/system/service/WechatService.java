@@ -1,9 +1,9 @@
 package com.gopher.system.service;
 
-import com.gopher.system.service.model.WechatAuthProperties;
+import com.gopher.system.model.vo.WechatLoginResponse;
 
 public interface WechatService {
 	
-	public void wechatLogin();
+	public WechatLoginResponse wechatLogin(String code);
 
 }
