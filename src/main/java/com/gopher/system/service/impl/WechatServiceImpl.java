@@ -12,7 +12,9 @@ import org.springframework.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.exception.BusinessRuntimeException;
-import com.gopher.system.model.vo.response.WechatLoginResponse;
+import com.gopher.system.model.vo.response.WechatAuthResponse;
+import com.gopher.system.model.vo.response.WechatTokenResponse;
+import com.gopher.system.model.vo.response.WechatUserInfoResponse;
 import com.gopher.system.service.WechatService;
 import com.gopher.system.util.HttpConenection;
 @Service
@@ -27,43 +29,63 @@ public class WechatServiceImpl implements WechatService{
 	@Value("${wechat.secret}")
 	private String secret;
 
-	@Value("${wechat.grantType}")
-	private String grantType;
+	@Value("${wechat.grantType.auth}")
+	private String grantTypeAuth;
+	
+	@Value("${wechat.grantType.token}")
+	private String grantTypeToken;
+	
+	@Value("${wechat.tokenHost}")
+	private String tokenHost;
+	
+	@Value("${wechat.userInfoHost}")
+	private String userInfoHost;
 	
     private static final Logger LOG = LoggerFactory.getLogger(WechatServiceImpl.class);
 
 	@Override
-	public WechatLoginResponse getSession(String code) {
+	public WechatAuthResponse getSession(String code) {
 		if(!StringUtils.hasText(code)) {
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}
-		WechatLoginResponse result = new WechatLoginResponse();
+		WechatAuthResponse result = new WechatAuthResponse();
 		Map<String, String> params = new HashMap<>();
 		params.put("appId", appId);
 		params.put("secret", secret);
 		params.put("js_code",code);
-		params.put("grantType", grantType);
+		params.put("grantType", grantTypeAuth);
 		String response = HttpConenection.getInstance().sendHttpPost(sessionHost, params);
 		LOG.info(response);
 		if(null != response) {
-			result = JSON.parseObject(response, WechatLoginResponse.class);
+			result = JSON.parseObject(response, WechatAuthResponse.class);
 		}
 		return result;
 	}
-	
-	
-	public static void main(String[] args) {
-		String url = "https://api.weixin.qq.com/sns/jscode2session";
-		String appId="wx27fdb1adf819fbc0";
-		String secret="0a38b9dd78305fdbea16ff140de70e1a";
-		String grantType="authorization_code";
+
+
+	@Override
+	public WechatTokenResponse getToken() {
 		Map<String, String> params = new HashMap<>();
 		params.put("appId", appId);
 		params.put("secret", secret);
-		params.put("js_code","023SWBmR0cSQC82FUQmR06xKmR0SWBm2");
-		params.put("grantType", grantType);
-		String result = HttpConenection.getInstance().sendHttpPost(url, params);
-		LOG.info(result);
+		params.put("grantType", grantTypeToken);
+		String response = HttpConenection.getInstance().sendHttpPost(tokenHost, params);
+		LOG.info(response);
+		return null;
+	}
+
+    /**
+     * https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN
+     */
+	@Override
+	public WechatUserInfoResponse getUserInfo(String accessToken, String openid) {
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", accessToken);
+		params.put("openid", openid);
+		params.put("lang", "zh_CN");
+		String response = HttpConenection.getInstance().sendHttpPost(userInfoHost, params);
+		LOG.info(response);
+		return null;
 	}
 
 }

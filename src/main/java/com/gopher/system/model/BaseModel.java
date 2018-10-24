@@ -6,60 +6,71 @@ import java.util.Date;
 public class BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1309753304387753614L;
-    private Integer id;
+    private int id;
     private Date  createTime;
     private Date  updateTime;
-    private Integer createUserId;
-    private Integer updateUserId;
+    private int createUser;
+    private int updateUser;
 
-    public Integer getId() {
-        return id;
-    }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public int getId() {
+		return id;
+	}
 
-    public Date getCreateTime() {
-        return createTime;
-    }
 
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
+	public void setId(int id) {
+		this.id = id;
+	}
 
-    public Date getUpdateTime() {
-        return updateTime;
-    }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
+	public Date getCreateTime() {
+		return createTime;
+	}
 
-    public Integer getCreateUserId() {
-        return createUserId;
-    }
 
-    public void setCreateUserId(Integer createUserId) {
-        this.createUserId = createUserId;
-    }
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
 
-    public Integer getUpdateUserId() {
-        return updateUserId;
-    }
 
-    public void setUpdateUserId(Integer updateUserId) {
-        this.updateUserId = updateUserId;
-    }
+	public Date getUpdateTime() {
+		return updateTime;
+	}
 
-    @Override
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
+	}
+
+
+	public int getCreateUser() {
+		return createUser;
+	}
+
+
+	public void setCreateUser(int createUser) {
+		this.createUser = createUser;
+	}
+
+
+	public int getUpdateUser() {
+		return updateUser;
+	}
+
+
+	public void setUpdateUser(int updateUser) {
+		this.updateUser = updateUser;
+	}
+
+
+	@Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("BaseModel{");
         sb.append("id=").append(id);
         sb.append(", createTime=").append(createTime);
         sb.append(", updateTime=").append(updateTime);
-        sb.append(", createUserId=").append(createUserId);
-        sb.append(", updateUserId=").append(updateUserId);
+        sb.append(", createUser=").append(createUser);
+        sb.append(", updateUser=").append(updateUser);
         sb.append('}');
         return sb.toString();
     }

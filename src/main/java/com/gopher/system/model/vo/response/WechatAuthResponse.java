@@ -1,6 +1,6 @@
 package com.gopher.system.model.vo.response;
 
-public class WechatLoginResponse {
+public class WechatAuthResponse {
 	
 	private String appid;
 	private String sessioon_key;

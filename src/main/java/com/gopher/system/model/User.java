@@ -1,16 +1,40 @@
 package com.gopher.system.model;
 
 public class User extends BaseModel {
+	/**
+	 * 客户用户
+	 */
+	public final static int CUSTOMER= 1;
+	/**
+	 * 管理者用户
+	 */
+	public final static int MANAGER = 2;
 
     private static final long serialVersionUID = 2039078978371646988L;
 
     private String name;
+    
     private String account;
+    
     private String password;
-    private String mobilePhone;
-    private String emailAddress;
+    
+    private String phone;
+    
+    private String wechat;
+    
+    private int userType = CUSTOMER;
+    
+    
 
-    public String getName() {
+    public int getUserType() {
+		return userType;
+	}
+
+	public void setUserType(int userType) {
+		this.userType = userType;
+	}
+
+	public String getName() {
         return name;
     }
 
@@ -34,19 +58,20 @@ public class User extends BaseModel {
         this.password = password;
     }
 
-    public String getMobilePhone() {
-        return mobilePhone;
-    }
+    public String getPhone() {
+		return phone;
+	}
 
-    public void setMobilePhone(String mobilePhone) {
-        this.mobilePhone = mobilePhone;
-    }
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
-    public String getEmailAddress() {
-        return emailAddress;
-    }
+	public String getWechat() {
+		return wechat;
+	}
 
-    public void setEmailAddress(String emailAddress) {
-        this.emailAddress = emailAddress;
-    }
+	public void setWechat(String wechat) {
+		this.wechat = wechat;
+	}
+
 }

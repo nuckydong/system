@@ -23,11 +23,8 @@ public class Customer extends BaseModel {
      */
     private String wechat;
 
-    private String qqNumber;
+    private String qq;
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
 
     public String getName() {
         return name;
@@ -69,11 +66,12 @@ public class Customer extends BaseModel {
         this.wechat = wechat;
     }
 
-    public String getQqNumber() {
-        return qqNumber;
-    }
+	public String getQq() {
+		return qq;
+	}
 
-    public void setQqNumber(String qqNumber) {
-        this.qqNumber = qqNumber;
-    }
+	public void setQq(String qq) {
+		this.qq = qq;
+	}
+
 }
