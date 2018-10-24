@@ -18,7 +18,7 @@ public class BusinessRuntimeException extends RuntimeException {
 		this.message = codeAndMsg.getMsg();
 	}
 	public BusinessRuntimeException(String msg) {
-		super(msg);
+		this.message = msg;
 		this.code=1001;
 	}
 
