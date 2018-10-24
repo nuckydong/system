@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.exception.BusinessRuntimeException;
-import com.gopher.system.model.vo.WechatLoginResponse;
+import com.gopher.system.model.vo.response.WechatLoginResponse;
 import com.gopher.system.service.WechatService;
 import com.gopher.system.util.HttpConenection;
 @Service
@@ -33,7 +33,7 @@ public class WechatServiceImpl implements WechatService{
     private static final Logger LOG = LoggerFactory.getLogger(WechatServiceImpl.class);
 
 	@Override
-	public WechatLoginResponse wechatLogin(String code) {
+	public WechatLoginResponse getSession(String code) {
 		if(!StringUtils.hasText(code)) {
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}

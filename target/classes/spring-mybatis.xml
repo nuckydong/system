@@ -48,7 +48,7 @@
         <!-- 实体对象路径-->
         <property name="typeAliasesPackage" value="com.gopher.system.model"></property>
         <!-- sql映射文件路径 -->
-        <property name="mapperLocations" value="classpath*:com/gopher/system/dao/mysql/mapper/*Mapper.xml"></property>
+        <property name="mapperLocations" value="classpath*:com/gopher/system/dao/mysql/mapper/*.xml"></property>
     </bean>
     
     <!--3 自动扫描对象关系映射 -->
@@ -56,7 +56,7 @@
         <!--指定会话工厂，如果当前上下文中只定义了一个则该属性可省去 -->
         <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"></property>
         <!-- 指定要自动扫描接口的基础包，实现接口 -->
-        <property name="basePackage" value="wefun.dao.mysql"></property>
+        <property name="basePackage" value="com.gopher.system.dao.mysql"></property>
     </bean>
     
     <!--4 声明式事务管理 -->

@@ -15,12 +15,11 @@ public class WechatController  {
 	@Autowired
 	private WechatService wechatService;
 	
-	@PostMapping(path="/wechatLogin")
+	@PostMapping(path="/getSession")
 	public Result wechatLogin(@RequestParam(name="code") String code) {
 		Result result = new Result();
-		result.setData(wechatService.wechatLogin(code));
+		result.setData(wechatService.getSession(code));
 		return result;
-		
 	}
 
 }
