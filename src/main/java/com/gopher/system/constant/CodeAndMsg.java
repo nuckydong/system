@@ -8,7 +8,6 @@ public enum CodeAndMsg {
 	INVALID_PARAM(1002,"非法的参数"),
 	CANNOT_FIND_IN_DB(1003,"数据库找不到记录"),
 	FORBIDDEN(1004,"没有权限");
-	
 	private String msg;
 	private int code;
 	private CodeAndMsg(int code, String msg) {

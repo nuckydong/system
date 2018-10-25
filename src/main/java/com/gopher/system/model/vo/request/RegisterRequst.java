@@ -18,8 +18,20 @@ public class RegisterRequst {
 	 * 电话号码
 	 */
 	private String phone;
+	/**
+	 * 微信 js_code 获取用户的openid和session_key
+	 */
+	private String code;
 	
 	
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 	public String getCompany() {
 		return company;
 	}

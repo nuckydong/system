@@ -1,11 +1,10 @@
 package com.gopher.system.service;
 
-import java.io.Serializable;
 import java.util.List;
 
-public interface BaseService<T extends Serializable,PK extends Serializable> {
+public interface BaseService<T,PK> {
 
-    Integer add(T t);
+    Integer insert(T t);
 
     void update(T t);
 

@@ -1,13 +1,12 @@
 package com.gopher.system.dao.mysql;
 
-import com.gopher.system.model.BaseModel;
-import com.gopher.system.util.Page;
-
 import java.io.Serializable;
 import java.util.List;
 
-public interface BaseDAO<T extends BaseModel,PK extends Serializable> {
-    Integer add(T t);
+import com.gopher.system.util.Page;
+
+public interface BaseDAO<T,PK extends Serializable> {
+    Integer insert(T t);
 
     void update(T t);
 
@@ -16,6 +15,8 @@ public interface BaseDAO<T extends BaseModel,PK extends Serializable> {
     List<T> findList(T t);
 
     T findOne(PK pk);
+    
+    T findOne(T t);
 
     Page<T> findPage (Page<T> page);
 
