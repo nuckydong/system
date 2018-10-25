@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gopher.system.controller.model.Result;
 import com.gopher.system.model.vo.request.LoginRequst;
 import com.gopher.system.model.vo.request.RegisterRequst;
 import com.gopher.system.service.AuthService;
@@ -16,13 +17,15 @@ public class AuthController {
 	private AuthService authService;
 	
 	@PostMapping(path="/register")
-	public void register(@ModelAttribute RegisterRequst registerRequst){
+	public Result register(@ModelAttribute RegisterRequst registerRequst){
 		authService.register(registerRequst);
+		return new Result();
 	}
 	
 	@PostMapping(path="/login")
-	public void login(@ModelAttribute LoginRequst loginRequst){
+	public Result login(@ModelAttribute LoginRequst loginRequst){
 		authService.login(loginRequst);
+		return new Result();
 	}
 	
 

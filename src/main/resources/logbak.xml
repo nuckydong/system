@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_BASE" value="${catalina.home}/logs/" />
-	<appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+    <property name="LOG_BASE" value="/usr/local/software/logs" />
+	<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 		<layout class="ch.qos.logback.classic.PatternLayout">
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{80} - %msg%n</pattern>
 		</layout>
@@ -31,6 +31,6 @@
 	</appender>
 	<root level="INFO">
 		<appender-ref ref="ASYNC_ROLLING_FILE" />
-		<appender-ref ref="stdout" />
+		<appender-ref ref="CONSOLE" />
 	</root>
 </configuration>

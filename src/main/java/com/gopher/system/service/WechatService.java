@@ -11,5 +11,8 @@ public interface WechatService {
 	public WechatTokenResponse getToken();
 	
 	public WechatUserInfoResponse getUserInfo(final String accessToken,final String openId);
+	
+	
+	public WechatUserInfoResponse getUserInfo(final String code);
 
 }

@@ -45,7 +45,7 @@
 
 	</update>
 
-	<insert id="insert" parameterType="com.gopher.system.model.User">
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" parameterType="com.gopher.system.model.User">
 		INSERT INTO user
 		(name,account,password,phone,wechat,user_type,create_user,update_user,create_time,update_time)
 		VALUES

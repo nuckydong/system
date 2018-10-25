@@ -29,7 +29,7 @@
 			jdbcType="INTEGER" />
 	</resultMap>
 	
-	<insert id="insert" parameterType="com.gopher.system.model.Customer">
+	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" parameterType="com.gopher.system.model.Customer">
 			INSERT INTO customer
 		(name,description,mobile_phone,telephone,wechat,qq,create_user,update_user,create_time,update_time)
 		VALUES

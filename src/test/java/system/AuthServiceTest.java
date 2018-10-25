@@ -12,10 +12,11 @@ public class AuthServiceTest extends BaseTest{
 	@Test
 	public void registerTest(){
 		RegisterRequst param = new RegisterRequst();
-		param.setAccount("TEST2");
+		param.setAccount("gaygay");
 		param.setCompany("TEST");
 		param.setPassword("TEST");
 		param.setPhone("TEST");
+		param.setCode("123");
 		authService.register(param);
 	}
 

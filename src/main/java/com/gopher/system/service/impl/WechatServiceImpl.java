@@ -42,7 +42,17 @@ public class WechatServiceImpl implements WechatService{
 	private String userInfoHost;
 	
     private static final Logger LOG = LoggerFactory.getLogger(WechatServiceImpl.class);
-
+    /**
+     * https://api.weixin.qq.com/cgi-bin/token?appid=wx27fdb1adf819fbc0&secret=0a38b9dd78305fdbea16ff140de70e1a&grant_type=client_credential
+     */
+    public static void main(String[] args) {
+		Map<String, String> params = new HashMap<>();
+		params.put("appid", "wx27fdb1adf819fbc0");
+		params.put("secret", "0a38b9dd78305fdbea16ff140de70e1a");
+		params.put("grant_type","client_credential");
+		String response = HttpConenection.getInstance().sendHttpGet("https://api.weixin.qq.com/cgi-bin/token?appid=wx27fdb1adf819fbc0&secret=0a38b9dd78305fdbea16ff140de70e1a&grant_type=client_credential");
+		LOG.info(response);
+	}
 	@Override
 	public WechatAuthResponse getSession(String code) {
 		if(!StringUtils.hasText(code)) {
@@ -61,17 +71,15 @@ public class WechatServiceImpl implements WechatService{
 		}
 		return result;
 	}
-
-
+    /**
+     * https://api.weixin.qq.com/cgi-bin/token?appid=wx27fdb1adf819fbc0&secret=0a38b9dd78305fdbea16ff140de70e1a&grant_type=client_credential
+     */
 	@Override
 	public WechatTokenResponse getToken() {
-		Map<String, String> params = new HashMap<>();
-		params.put("appId", appId);
-		params.put("secret", secret);
-		params.put("grantType", grantTypeToken);
-		String response = HttpConenection.getInstance().sendHttpPost(tokenHost, params);
+		String Url = String.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=%s&appid=%s&secret=%s",this.grantTypeToken,this.appId,this.secret);
+		String response = HttpConenection.getInstance().sendHttpPost(Url);
 		LOG.info(response);
-		return null;
+		return JSON.parseObject(response, WechatTokenResponse.class);
 	}
 
     /**
@@ -85,6 +93,27 @@ public class WechatServiceImpl implements WechatService{
 		params.put("lang", "zh_CN");
 		String response = HttpConenection.getInstance().sendHttpPost(userInfoHost, params);
 		LOG.info(response);
+		return null;
+	}
+
+
+	@Override
+	public WechatUserInfoResponse getUserInfo(String code) {
+		WechatTokenResponse token = this.getToken();
+		if(null == token){
+			LOG.error("获取ACCESS_TOKEN失败");
+			return null;
+		}
+		WechatAuthResponse session = this.getSession(code);
+		if(null == session){
+			LOG.error("获取SESSION失败");
+			return null;
+		}
+		final String access_token = token.getAccess_token();
+		final String open_id = session.getOpen_id();
+		if(StringUtils.hasText(access_token) && StringUtils.hasText(open_id)){
+			return this.getUserInfo(access_token, open_id);
+		}
 		return null;
 	}
 
