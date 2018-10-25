@@ -1,3 +1,10 @@
+##ignore this file##
+/target/ 
+.classpath
+.project
+.settings     
+
+
 # Compiled class file
 *.class
 
