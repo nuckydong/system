@@ -56,7 +56,7 @@ public class AuthServiceImpl implements AuthService{
 		user.setAccount(account);
 		user.setPassword(password);
 		user.setPhone(phone);
-		//TODO 
+		//TODO 直接回去用户微信信息
 		user.setWechat("TEST");
 		Customer customer = new Customer();
 		customer.setName(company);
