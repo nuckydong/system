@@ -25,7 +25,7 @@ public class CustomerServiceImpl implements CustomerService{
 
 	@Override
 	public void delete(Integer pk) {
-		customerDAO.delete(pk);
+		//TODO 
 	}
 
 	@Override
@@ -35,7 +35,9 @@ public class CustomerServiceImpl implements CustomerService{
 
 	@Override
 	public Customer findOne(Integer pk) {
-		return customerDAO.findOne(pk);
+		Customer customer = new Customer();
+		customer.setId(pk);
+		return customerDAO.findOne(customer);
 	}
 
 	@Override

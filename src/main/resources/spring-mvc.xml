@@ -43,17 +43,12 @@
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
 			<mvc:exclude-mapping path="/" />
+			<mvc:exclude-mapping path="/system/auth/register" />
+			<mvc:exclude-mapping path="/system/auth/login" />
+			<mvc:exclude-mapping path="/system/auth/logout" />
 			<bean class="com.gopher.system.interceptor.LoginInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
     <mvc:resources location="/" mapping="/**"/>
-	<!-- 配置视图解析 -->
-	<!--  
-	<bean id="viewResolver"
-		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
-		<property name="prefix" value="/WEB-INF/" />
-		<property name="suffix" value="" />
-	</bean>
-	-->
 
 </beans>

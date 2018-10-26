@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public void delete(Integer pk) {
-		userDAO.delete(pk);
+		// TODO 
 	}
 	
 
@@ -36,7 +36,9 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	public User findOne(Integer pk) {
-		return userDAO.findOne(pk);
+		User query = new User();
+		query.setId(pk);
+		return userDAO.findOne(query);
 	}
 
 	@Override

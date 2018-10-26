@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gopher.system.dao.mysql.OrderDAO">
+
+	<resultMap id="orderMap" type="com.gopher.system.model.Order">
+		<result property="id" column="id" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+		<result property="createTime" column="create_time" javaType="java.util.Date"
+			jdbcType="DATE" />
+		<result property="updateTime" column="update_time" javaType="java.util.Date"
+			jdbcType="DATE" />
+		<result property="createUser" column="create_user" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+		<result property="updateUser" column="update_user" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+
+		<result property="number" column="number" javaType="java.lang.String"
+			jdbcType="VARCHAR" />
+		<result property="account" column="account" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+	</resultMap>
+
+
+	<update id="update" parameterType="com.gopher.system.model.Order">
+		UPDATE user
+		<set>
+			update_time = now(),
+			update_user = #{updateUser}
+		</set>
+		<where>
+			<if test="number != null and number != '' ">
+				number = #{number}
+			</if>
+			<if test="id > 0 ">
+				id = #{id}
+			</if>
+		</where>
+
+	</update>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.gopher.system.model.Order">
+		INSERT INTO user
+		(number,create_user,update_user,create_time,update_time)
+		VALUES
+		(#{number},#{createUser},#{updateUser},now(),now())
+	</insert>
+
+	<select id="findOne" parameterType="com.gopher.system.model.Order"
+		resultMap="orderMap">
+		SELECT * FROM user
+		<where>
+			<where>
+				<if test="number != null and number != '' ">
+					number = #{number}
+				</if>
+				<if test="id > 0 ">
+					id = #{id}
+				</if>
+			</where>
+		</where>
+	</select>
+
+</mapper>

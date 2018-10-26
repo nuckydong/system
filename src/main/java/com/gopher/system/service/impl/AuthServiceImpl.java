@@ -15,11 +15,14 @@ import com.gopher.system.model.User;
 import com.gopher.system.model.vo.request.LoginRequst;
 import com.gopher.system.model.vo.request.LogoutRequst;
 import com.gopher.system.model.vo.request.RegisterRequst;
+import com.gopher.system.model.vo.response.LoginResponse;
 import com.gopher.system.service.AuthService;
+import com.gopher.system.service.CacheService;
 import com.gopher.system.service.CustomerService;
 import com.gopher.system.service.CustomerUserService;
 import com.gopher.system.service.UserService;
 import com.gopher.system.service.WechatService;
+import com.gopher.system.util.CookieUtils;
 import com.gopher.system.util.MD5Utils;
 
 @Service
@@ -32,6 +35,8 @@ public class AuthServiceImpl implements AuthService{
 	private CustomerUserService customerUserService;
 	@Autowired
 	private WechatService wechatService;
+	@Autowired
+	private CacheService cacheService;
     /**
      * 此注册为商户注册,需要添加一条用户信息(标注为商户,只允许登录APP)
      * 添加一条商户信息,如果存在则不添加
@@ -92,7 +97,7 @@ public class AuthServiceImpl implements AuthService{
 	}
 
 	@Override
-	public void login(LoginRequst loginRequest) {
+	public LoginResponse login(LoginRequst loginRequest) {
 		if(null == loginRequest){
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}
@@ -112,11 +117,17 @@ public class AuthServiceImpl implements AuthService{
 		if(!Objects.equals(MD5Utils.MD5(password), passwordDB)){
 			throw new BusinessRuntimeException("账号或密码错误,请检查账号密码后重新登录");
 		}
+		LoginResponse response = new LoginResponse();
+		final String TOKEN = MD5Utils.MD5(account+System.currentTimeMillis());
+		response.setToken(TOKEN);
+		response.setExpiry(System.currentTimeMillis()+CookieUtils.DEFAULT_TOKEN_ALIVE);
+		response.setUserId(userDB.getId());
+		cacheService.set(TOKEN, response);
+		return response;
 	}
 
 	@Override
 	public void logout(LogoutRequst logoutRequst) {
-		
 	}
 
 }
