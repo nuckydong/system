@@ -45,7 +45,6 @@
 			<mvc:exclude-mapping path="/" />
 			<mvc:exclude-mapping path="/system/auth/register" />
 			<mvc:exclude-mapping path="/system/auth/login" />
-			<mvc:exclude-mapping path="/system/auth/logout" />
 			<bean class="com.gopher.system.interceptor.LoginInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
