@@ -10,7 +10,7 @@ public class Commodity extends BaseModel{
 	 */
 	private String name;
 	/**
-	 * 相同名称的商品 可能有不同的类型(等级)
+	 * 相同名称的商品 可能有不同的种类(等级)
 	 */
 	private int commodityTypeId;
 	/**
