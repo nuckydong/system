@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gopher.system.dao.mysql.OrderCommodityDAO">
+
+	<resultMap id="orderCommodityMap"
+		type="com.gopher.system.model.OrderCommodity">
+		<result property="id" column="id" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+
+		<result property="orderId" column="order_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
+		<result property="commodityId" column="commodity_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
+		<result property="price" column="price"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
+		<result property="unit" column="unit"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+
+		<result property="amount" column="amount"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
+	</resultMap>
+
+
+	<update id="update"
+		parameterType="com.gopher.system.model.OrderCommodity">
+		UPDATE order_commodity
+		<set>
+			update_time = now(),
+			update_user = #{updateUser},
+			amount =
+			#{amount}
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.gopher.system.model.OrderCommodity">
+		INSERT INTO order_commodity
+		(order_id,commodity_id,price,unit,amount)
+		VALUES
+		(#{orderId},#{commodityId},#{price},#{unit},#{amount})
+	</insert>
+
+	<select id="findOne"
+		parameterType="com.gopher.system.model.OrderCommodity"
+		resultMap="orderCommodityMap">
+		SELECT * FROM order_commodity
+		<where>
+			id = #{id}
+		</where>
+	</select>
+
+	<select id="findList"
+		parameterType="com.gopher.system.model.OrderCommodity"
+		resultMap="orderCommodityMap">
+		SELECT * FROM order_commodity
+		<where>
+			<if test="orderId >0 ">order_id = #{orderId}</if>
+		</where>
+	</select>
+
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gopher.system.dao.mysql.CommodityDAO">
+	<resultMap id="commodityMap"
+		type="com.gopher.system.model.Commodity">
+		<result property="id" column="id" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+		<result property="createTime" column="create_time"
+			javaType="java.util.Date" jdbcType="DATE" />
+		<result property="updateTime" column="update_time"
+			javaType="java.util.Date" jdbcType="DATE" />
+		<result property="createUser" column="create_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="updateUser" column="update_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
+		<result property="name" column="name"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="commodityTypeId" column="commodity_type_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="price" column="price"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+	</resultMap>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.gopher.system.model.Commodity">
+		INSERT INTO commodity
+		(name,commodity_type_id,price,create_user,update_user,create_time,update_time)
+		VALUES
+		(#{name},#{commodityTypeId},#{price},#{createUser},#{updateUser},now(),now())
+	</insert>
+
+	<select id="findOne"
+		parameterType="com.gopher.system.model.Commodity"
+		resultMap="commodityMap">
+		SELECT * FROM commodity
+		<where>
+			id = #{id}
+		</where>
+	</select>
+
+	<select id="findList"
+		parameterType="com.gopher.system.model.Commodity"
+		resultMap="commodityMap">
+		SELECT * FROM commodity
+		<where>
+			<if test="name != null and name != '' ">
+				name LIKE CONCAT('%',#{name},'%')
+			</if>
+			<if test="commodityTypeId > 0 ">
+				commodity_type_id = #{commodityTypeId}
+			</if>
+		</where>
+	</select>
+
+
+
+</mapper>

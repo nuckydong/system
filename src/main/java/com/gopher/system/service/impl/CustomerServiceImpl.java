@@ -19,28 +19,6 @@ public class CustomerServiceImpl implements CustomerService{
 	}
 
 	@Override
-	public void update(Customer t) {
-		customerDAO.update(t);
-	}
-
-	@Override
-	public void delete(Integer pk) {
-		//TODO 
-	}
-
-	@Override
-	public List<Customer> findList(Customer t) {
-		return customerDAO.findList(t);
-	}
-
-	@Override
-	public Customer findOne(Integer pk) {
-		Customer customer = new Customer();
-		customer.setId(pk);
-		return customerDAO.findOne(customer);
-	}
-
-	@Override
 	public Customer findByName(String customerName) {
 		Customer customer = new Customer();
 		customer.setName(customerName);

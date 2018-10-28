@@ -7,24 +7,23 @@
 	<resultMap id="orderMap" type="com.gopher.system.model.Order">
 		<result property="id" column="id" javaType="java.lang.Integer"
 			jdbcType="INTEGER" />
-		<result property="createTime" column="create_time" javaType="java.util.Date"
-			jdbcType="DATE" />
-		<result property="updateTime" column="update_time" javaType="java.util.Date"
-			jdbcType="DATE" />
-		<result property="createUser" column="create_user" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
-		<result property="updateUser" column="update_user" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
+		<result property="createTime" column="create_time"
+			javaType="java.util.Date" jdbcType="DATE" />
+		<result property="updateTime" column="update_time"
+			javaType="java.util.Date" jdbcType="DATE" />
+		<result property="createUser" column="create_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="updateUser" column="update_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
 
-		<result property="number" column="number" javaType="java.lang.String"
-			jdbcType="VARCHAR" />
-		<result property="account" column="account" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
+		<result property="number" column="number"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
 	</resultMap>
 
 
-	<update id="update" parameterType="com.gopher.system.model.Order">
-		UPDATE user
+	<update id="update"
+		parameterType="com.gopher.system.model.Order">
+		UPDATE `order`
 		<set>
 			update_time = now(),
 			update_user = #{updateUser}
@@ -42,24 +41,32 @@
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
 		parameterType="com.gopher.system.model.Order">
-		INSERT INTO user
+		INSERT INTO `order`
 		(number,create_user,update_user,create_time,update_time)
 		VALUES
 		(#{number},#{createUser},#{updateUser},now(),now())
 	</insert>
 
-	<select id="findOne" parameterType="com.gopher.system.model.Order"
-		resultMap="orderMap">
-		SELECT * FROM user
+	<select id="findOne"
+		parameterType="com.gopher.system.model.Order" resultMap="orderMap">
+		SELECT * FROM `order`
 		<where>
-			<where>
-				<if test="number != null and number != '' ">
-					number = #{number}
-				</if>
-				<if test="id > 0 ">
-					id = #{id}
-				</if>
-			</where>
+			<if test="number != null and number != '' ">
+				number = #{number}
+			</if>
+			<if test="id > 0 ">
+				id = #{id}
+			</if>
+		</where>
+	</select>
+
+	<select id="findList"
+		parameterType="com.gopher.system.model.Order" resultMap="orderMap">
+		SELECT * FROM `order`
+		<where>
+			<if test="createUser >0 ">
+				create_user = #{createUser}
+			</if>
 		</where>
 	</select>
 

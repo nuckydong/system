@@ -4,19 +4,27 @@ import java.util.List;
 
 import com.gopher.system.model.Order;
 import com.gopher.system.model.vo.request.OrderRequst;
+import com.gopher.system.model.vo.response.OrderDetailResponse;
 
-public interface OrderService extends BaseService<Order,Integer>{
+public interface OrderService{
 	/**
-	 * 获取订单
-	 * @param limit 最近的条目数量
+	 * 获取当前用户的订单列表
+	 * @param 
 	 * @return
 	 */
-	List<Order> getOrderList(int limit);
+	List<Order> getOrderListByCurrentUser();
 	/**
 	 * 新增订单 
 	 * @param orderRequst
 	 */
 	public void insert(OrderRequst orderRequst);
+	
+	/**
+	 * 获取订单详情
+	 * @param id
+	 * @return
+	 */
+	public OrderDetailResponse getOrderDetail(int id);
 	
 
 }

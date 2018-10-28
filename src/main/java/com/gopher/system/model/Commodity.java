@@ -17,7 +17,17 @@ public class Commodity extends BaseModel{
 	 * 商品默认价格 新入客户未特别定价,默认此价格
 	 */
 	private int price;
+	/**
+	 * 
+	 */
+	private String unit;
 	
+	public String getUnit() {
+		return unit;
+	}
+	public void setUnit(String unit) {
+		this.unit = unit;
+	}
 	public int getPrice() {
 		return price;
 	}

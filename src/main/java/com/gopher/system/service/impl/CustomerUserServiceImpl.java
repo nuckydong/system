@@ -1,7 +1,5 @@
 package com.gopher.system.service.impl;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,31 +13,15 @@ public class CustomerUserServiceImpl implements CustomerUserService{
 
 	@Override
 	public Integer insert(CustomerUser t) {
-		
 		return customerUserDAO.insert(t);
 	}
 
 	@Override
-	public void update(CustomerUser t) {
-		// TODO Auto-generated method stub
-		
+	public CustomerUser get(int userId) {
+		CustomerUser userCustomer = new CustomerUser();
+		userCustomer.setUserId(userId);
+		return customerUserDAO.findOne(userCustomer);
 	}
 
-	@Override
-	public void delete(Integer pk) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public List<CustomerUser> findList(CustomerUser t) {
-		return customerUserDAO.findList(t);
-	}
-
-	@Override
-	public CustomerUser findOne(Integer pk) {
-		// TODO 
-		return null;
-	}
 
 }
