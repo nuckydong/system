@@ -16,7 +16,7 @@ public class AuthController {
 	@Autowired
 	private AuthService authService;
 	
-	@PostMapping(path="/register")
+	@RequestMapping(path="/register")
 	public Result register(@ModelAttribute RegisterRequst registerRequst){
 		authService.register(registerRequst);
 		return new Result();
@@ -24,8 +24,9 @@ public class AuthController {
 	
 	@PostMapping(path="/login")
 	public Result login(@ModelAttribute LoginRequst loginRequst){
-		authService.login(loginRequst);
-		return new Result();
+		Result result = new Result();
+		result.setData(authService.login(loginRequst));
+		return result;
 	}
 	
 
