@@ -1,24 +1,32 @@
 package com.gopher.system.service.impl;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.gopher.system.service.CacheService;
 @Service
 public class CacheServiceImpl implements CacheService{
+	@Autowired
+	private RedisTemplate<String,Object> redisTemplate;
 
 	@Override
 	public Object get(String key) {
-		return localCache.get(key);
+		return redisTemplate.opsForValue().get(key);
 	}
 
 	@Override
-	public void set(String key, Object value) {
-		localCache.put(key, value);
+	public void set(String key, Object value,int timeout) {
+		redisTemplate.opsForValue().set(key, value, timeout,TimeUnit.SECONDS);
 	}
-	private static final Map<String,Object> localCache = new ConcurrentHashMap<>();
+	
+	@Override
+	public void expire(String key,int timeout) {
+		redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
+	}
+
 
 
 }

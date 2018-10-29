@@ -11,9 +11,9 @@ import com.alibaba.fastjson.JSON;
 
 public class CookieUtils {
 	/**
-	 * 默认 cookie 生命周期 24小时
+	 * 默认 cookie 生命周期 7*24小时(单位秒)
 	 */
-	public static final int DEFAULT_TOKEN_ALIVE = 24 * 60 * 60;
+	public static final int DEFAULT_TOKEN_ALIVE = 7 * 24 * 60 * 60;
 	/**
 	 * cookie 的键
 	 */

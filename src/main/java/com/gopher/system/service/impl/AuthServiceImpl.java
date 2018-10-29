@@ -2,11 +2,14 @@ package com.gopher.system.service.impl;
 
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.Customer;
@@ -16,6 +19,7 @@ import com.gopher.system.model.vo.request.LoginRequst;
 import com.gopher.system.model.vo.request.LogoutRequst;
 import com.gopher.system.model.vo.request.RegisterRequst;
 import com.gopher.system.model.vo.response.LoginResponse;
+import com.gopher.system.model.vo.response.WechatUserInfoResponse;
 import com.gopher.system.service.AuthService;
 import com.gopher.system.service.CacheService;
 import com.gopher.system.service.CustomerService;
@@ -27,6 +31,7 @@ import com.gopher.system.util.MD5Utils;
 
 @Service
 public class AuthServiceImpl implements AuthService{
+	private static final Logger LOG = LoggerFactory.getLogger(AuthServiceImpl.class);
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -76,6 +81,10 @@ public class AuthServiceImpl implements AuthService{
 		user.setPassword(MD5Utils.MD5(password));
 		user.setPhone(phone);
 		//TODO 直接回去用户微信信息
+		WechatUserInfoResponse userInfo = wechatService.getUserInfo(code);
+		if(null != userInfo){
+			LOG.info("根据微信鉴权码获取微信用户信息:{}",JSON.toJSONString(userInfo));
+		}
 		Customer customerDB  = customerService.findByName(company);
 		if(null == customerDB){
 			customerDB= new Customer();
@@ -120,14 +129,13 @@ public class AuthServiceImpl implements AuthService{
 		LoginResponse response = new LoginResponse();
 		final String TOKEN = MD5Utils.MD5(account+System.currentTimeMillis());
 		response.setToken(TOKEN);
-		response.setExpiry(System.currentTimeMillis()+CookieUtils.DEFAULT_TOKEN_ALIVE);
-		response.setUserId(userDB.getId());
-		cacheService.set(TOKEN, response);
+		cacheService.set(TOKEN,userDB.getId(),CookieUtils.DEFAULT_TOKEN_ALIVE);
 		return response;
 	}
 
 	@Override
 	public void logout(LogoutRequst logoutRequst) {
+		
 	}
 
 }

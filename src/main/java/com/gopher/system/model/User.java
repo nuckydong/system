@@ -74,4 +74,23 @@ public class User extends BaseModel {
 		this.wechat = wechat;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("User [name=");
+		builder.append(name);
+		builder.append(", account=");
+		builder.append(account);
+		builder.append(", password=");
+		builder.append(password);
+		builder.append(", phone=");
+		builder.append(phone);
+		builder.append(", wechat=");
+		builder.append(wechat);
+		builder.append(", userType=");
+		builder.append(userType);
+		builder.append("]");
+		return builder.toString();
+	}
+
 }

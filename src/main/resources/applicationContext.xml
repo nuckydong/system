@@ -14,4 +14,5 @@
 	                                      com.gopher.system.exception" />
 	<context:property-placeholder location="classpath:config.properties" />
 	<import resource="classpath:spring-mybatis.xml" />
+	<import resource="classpath:spring-redis.xml" />
 </beans>
