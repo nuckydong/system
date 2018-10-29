@@ -10,6 +10,7 @@ public enum CodeAndMsg {
 	FORBIDDEN(1004,"没有权限");
 	private String msg;
 	private int code;
+	
 	private CodeAndMsg(int code, String msg) {
 		this.code = code;
 		this.msg = msg;

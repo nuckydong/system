@@ -40,6 +40,19 @@
 			id = #{id}
 		</where>
 	</update>
+	
+	<update id="delete"
+		parameterType="com.gopher.system.model.OrderCommodity">
+		DELETE FROM order_commodity
+		<where>
+		<if test="id > 0">
+		id = #{id}
+		</if>
+		<if test="orderId > 0">
+		order_id =#{orderId}
+		</if>
+		</where>
+	</update>
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
 		parameterType="com.gopher.system.model.OrderCommodity">

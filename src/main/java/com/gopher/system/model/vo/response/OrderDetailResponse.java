@@ -9,6 +9,21 @@ public class OrderDetailResponse {
 	private Date createTime;
 	private Date updateTime;
 	private List<CommodityResponse> commodityList;
+	private String updateUser;
+	private String createUser;
+	
+	public String getUpdateUser() {
+		return updateUser;
+	}
+	public void setUpdateUser(String updateUser) {
+		this.updateUser = updateUser;
+	}
+	public String getCreateUser() {
+		return createUser;
+	}
+	public void setCreateUser(String createUser) {
+		this.createUser = createUser;
+	}
 	public String getNumber() {
 		return number;
 	}

@@ -19,14 +19,28 @@ public class OrderController{
 	private OrderService orderService;
 	
 	@PostMapping(path="/add")
-	public Result getList(@ModelAttribute OrderRequst orderRequst) {
+	public Result add(@ModelAttribute OrderRequst orderRequst) {
 		Result result = new Result();
 		orderService.insert(orderRequst);
 		return result;
 	}
 	
+	@PostMapping(path="/update")
+	public Result update(@ModelAttribute OrderRequst orderRequst) {
+		Result result = new Result();
+		result.setData(orderService.updateOrder(orderRequst));
+		return result;
+	}
+	
+	@PostMapping(path="/delete")
+	public Result delete(@RequestParam(name="id",defaultValue="0") int id) {
+		Result result = new Result();
+		orderService.deleteOrder(id);
+		return result;
+	}
+	
 	@GetMapping(path="/getDetail")
-	public Result getList(@RequestParam(name="id",defaultValue="0") int id) {
+	public Result getDetail(@RequestParam(name="id",defaultValue="0") int id) {
 		Result result = new Result();
 		result.setData(orderService.getOrderDetail(id));
 		return result;

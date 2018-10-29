@@ -25,6 +25,17 @@ public interface OrderService{
 	 * @return
 	 */
 	public OrderDetailResponse getOrderDetail(int id);
+	/**
+	 * 取消订单
+	 * @param id
+	 */
+	public void deleteOrder(int id);
+	/**
+	 * 编辑订单
+	 * @param orderRequst
+	 * @return
+	 */
+	public OrderDetailResponse updateOrder(OrderRequst orderRequst);
 	
 
 }

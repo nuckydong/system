@@ -17,4 +17,9 @@ public interface OrderCommodityService{
 	 * @return
 	 */
 	public List<OrderCommodity> findList(int orderId);
+	/**
+	 * 根据订单ID删除
+	 * @param orderId
+	 */
+	public void deleteByOrderId(int orderId);
 }

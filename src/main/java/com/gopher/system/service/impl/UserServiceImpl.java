@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gopher.system.dao.mysql.UserDAO;
+import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.User;
 import com.gopher.system.service.UserService;
 import com.gopher.system.util.ThreadLocalUtils;
@@ -33,5 +34,18 @@ public class UserServiceImpl implements UserService{
 		query.setId(user_id);
 		return userDAO.findOne(query);
 	}
+	
+
+	@Override
+	public int getCurrentUserId() {
+		Object obj = ThreadLocalUtils.getObject(ThreadLocalUtils.USER_KEY);
+		if(null == obj){
+			throw new BusinessRuntimeException("您还没有登录,或者会话已经过期,请重新登录后再试");
+		}
+		int user_id = Integer.valueOf(obj.toString());
+		return user_id;
+	}
+	
+	
 
 }

@@ -12,7 +12,6 @@ public class BaseModel implements Serializable {
     private int createUser;
     private int updateUser;
 
-
 	public int getId() {
 		return id;
 	}

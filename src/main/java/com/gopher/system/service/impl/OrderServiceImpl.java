@@ -12,15 +12,17 @@ import org.springframework.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.gopher.system.constant.CodeAndMsg;
+import com.gopher.system.constant.State;
 import com.gopher.system.dao.mysql.OrderDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
+import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.Order;
 import com.gopher.system.model.OrderCommodity;
-import com.gopher.system.model.User;
 import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
 import com.gopher.system.service.CommodityService;
+import com.gopher.system.service.CustomerUserService;
 import com.gopher.system.service.OrderCommodityService;
 import com.gopher.system.service.OrderService;
 import com.gopher.system.service.UserService;
@@ -36,6 +38,8 @@ public class OrderServiceImpl implements OrderService{
 	private  OrderCommodityService orderCommodityService;
 	@Autowired
 	private CommodityService commodtityService;
+	@Autowired
+	private CustomerUserService customerUserService;
 	
     @Transactional
 	@Override
@@ -51,14 +55,19 @@ public class OrderServiceImpl implements OrderService{
 		if(list == null || list.isEmpty()){
 			throw new BusinessRuntimeException("请选择商品");
 		}
-		User user = userService.getCurrentUser();
-		if(null == user) {
-			throw new BusinessRuntimeException(CodeAndMsg.NEED_LOGIN);
-		}
 		Order order = new Order();
 		order.setNumber(System.currentTimeMillis()+"");
-		order.setCreateUser(user.getId());
-		order.setUpdateUser(user.getId());
+		final int userId = userService.getCurrentUserId();
+		order.setCreateUser(userId);
+		order.setUpdateUser(userId);
+		CustomerUser cu = customerUserService.get(userId);
+		if(null == cu){
+			throw new BusinessRuntimeException("根据用户ID找不到对应的客户");
+		}
+		/**
+		 * 当前订单的客户ID
+		 */
+		order.setCustomerId(cu.getCustomerId());
 		orderDAO.insert(order);
 		LOG.info("新增订单成功：订单ID：{}",order.getId());
 		// TODO 1 生成订单号,保存订单
@@ -73,11 +82,11 @@ public class OrderServiceImpl implements OrderService{
 	@Override
 	public List<Order> getOrderListByCurrentUser() {
 		Order order = new Order();
-		User user = userService.getCurrentUser();
-		if(null == user) {
-			throw new BusinessRuntimeException(CodeAndMsg.NEED_LOGIN);
+		CustomerUser cu = customerUserService.get(userService.getCurrentUserId());
+		if(null == cu){
+			throw new BusinessRuntimeException("根据用户ID找不到对应的客户");
 		}
-		order.setCreateUser(user.getId());
+		order.setCustomerId(cu.getCustomerId());
 		return orderDAO.findList(order);
 	}
 
@@ -86,9 +95,7 @@ public class OrderServiceImpl implements OrderService{
 		if(id <=0) {
 			throw new BusinessRuntimeException("无效的ID");
 		}
-		Order order = new Order();
-		order.setId(id);
-		order = orderDAO.findOne(order);
+		Order order = this.getOrder(id);
 		OrderDetailResponse result = null;
 		if(null != order) {
 			result = new OrderDetailResponse();
@@ -115,6 +122,59 @@ public class OrderServiceImpl implements OrderService{
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public void deleteOrder(int id) {
+		if(id <=0) {
+			throw new BusinessRuntimeException("无效的订单ID");
+		}
+		Order order = this.getOrder(id);
+		order.setState(State.INVALID.getState());
+		order.setUpdateUser(userService.getCurrentUserId());
+		orderDAO.update(order);
+		// 暂时不删除订单和商品的绑定关系表
+	}
+	
+    private Order getOrder(int orderId){
+		Order order = new Order();
+		order.setId(orderId);
+		order = orderDAO.findOne(order);
+		if(null == order){
+			throw new BusinessRuntimeException("根据订单ID找不到订单信息");
+		}
+		return order;
+    }
+    
+    @Transactional
+	@Override
+	public OrderDetailResponse updateOrder(OrderRequst orderRequst) {
+		if(orderRequst == null) {
+			throw new BusinessRuntimeException("参数不能为空");
+		}
+		final int orderId = orderRequst.getId();
+		final String commodityListJson = orderRequst.getCommodityListJson();
+		if(!StringUtils.hasText(commodityListJson)){
+			throw new BusinessRuntimeException("请选择商品");
+		}
+		if(orderId<=0){
+			throw new BusinessRuntimeException("无效的订单ID");
+		}
+		Order order = this.getOrder(orderId);
+		order.setUpdateUser(userService.getCurrentUserId());
+		orderDAO.update(order);
+		//删除之前的关联
+		orderCommodityService.deleteByOrderId(orderId);
+		//建立新的订单商品关联
+		List<OrderCommodity> list = JSON.parseArray(commodityListJson, OrderCommodity.class);
+		if(list == null || list.isEmpty()){
+			throw new BusinessRuntimeException("请选择商品");
+		}
+		for (OrderCommodity orderCommodity : list) {
+			orderCommodity.setOrderId(order.getId());
+			orderCommodityService.insert(orderCommodity);
+		}
+		return this.getOrderDetail(orderId);
 	}
 
 }

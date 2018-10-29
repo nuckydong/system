@@ -9,4 +9,6 @@ public interface UserService {
 	public User findOne(final String account);
 	
 	public User getCurrentUser();
+
+	int getCurrentUserId();
 }

@@ -22,5 +22,12 @@ public class OrderCommodityServiceImpl implements OrderCommodityService{
 		query.setOrderId(orderId);
 		return orderCommodityDAO.findList(query);
 	}
+	
+	@Override
+	public void deleteByOrderId(int orderId) {
+		OrderCommodity query = new OrderCommodity();
+		query.setOrderId(orderId);
+		orderCommodityDAO.delete(query);
+	}
 
 }

@@ -15,12 +15,33 @@ public class Order extends BaseModel{
 	 * 订单号 除id主键外 唯一标识
 	 */
 	private String number;
+	/**
+	 * 客户ID
+	 */
+	private int customerId;
+	/**
+	 * @see com.gopher.system.constant.State
+	 * 状态 逻辑删除
+	 */
+	private int state;
 	
+	public int getState() {
+		return state;
+	}
+	public void setState(int state) {
+		this.state = state;
+	}
 	public String getNumber() {
 		return number;
 	}
 	public void setNumber(String number) {
 		this.number = number;
+	}
+	public int getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
 	}
 
 }
