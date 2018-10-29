@@ -52,11 +52,11 @@ public class AuthServiceImpl implements AuthService{
 		if(null == registerRequst){
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}
-		final String account = registerRequst.getAccount();
+		final String account  = registerRequst.getAccount();
 		final String password = registerRequst.getPassword();
-		final String company = registerRequst.getCompany();
-		final String phone = registerRequst.getPhone();
-		final String code = registerRequst.getCode();
+		final String company  = registerRequst.getCompany();
+		final String phone    = registerRequst.getPhone();
+		final String code     = registerRequst.getCode();
 		if(!StringUtils.hasText(account)){
 			throw new BusinessRuntimeException("账户不能为空");
 		}
@@ -90,15 +90,12 @@ public class AuthServiceImpl implements AuthService{
 			customerDB= new Customer();
 			customerDB.setName(company);
 			customerDB.setMobilePhone(phone);
-			//初始一个 客户
-			int customer_id = customerService.insert(customerDB);
-			customerDB.setId(customer_id);
+		    customerService.insert(customerDB);
 		}
-		
 		final Integer customerId = customerDB.getId();
 		user.setUserType(User.CUSTOMER);
-		final Integer userId = userService.insert(user);
-	
+		userService.insert(user);
+		final Integer userId =user.getId();
 		CustomerUser customerUser = new CustomerUser();
 		customerUser.setCustomerId(customerId);
 		customerUser.setUserId(userId);

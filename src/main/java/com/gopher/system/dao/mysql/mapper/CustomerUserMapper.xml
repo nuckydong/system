@@ -24,7 +24,12 @@
 		resultMap="customerUserMap">
 		SELECT * FROM customer_user
 		<where>
+			<if test="userId > 0">
+				user_id = #{userId}
+			</if>
+			<if test="id > 0">
 			id = #{id}
+			</if>
 		</where>
 	</select>
 

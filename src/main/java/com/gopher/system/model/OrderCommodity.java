@@ -7,6 +7,7 @@ package com.gopher.system.model;
  *
  */
 public class OrderCommodity {
+	
 	private int id;
 	/**
 	 * 订单ID

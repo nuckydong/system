@@ -45,14 +45,6 @@ public class WechatServiceImpl implements WechatService{
     /**
      * https://api.weixin.qq.com/cgi-bin/token?appid=wx27fdb1adf819fbc0&secret=0a38b9dd78305fdbea16ff140de70e1a&grant_type=client_credential
      */
-    public static void main(String[] args) {
-		Map<String, String> params = new HashMap<>();
-		params.put("appid", "wx27fdb1adf819fbc0");
-		params.put("secret", "0a38b9dd78305fdbea16ff140de70e1a");
-		params.put("grant_type","client_credential");
-		String response = HttpConenection.getInstance().sendHttpGet("https://api.weixin.qq.com/cgi-bin/token?appid=wx27fdb1adf819fbc0&secret=0a38b9dd78305fdbea16ff140de70e1a&grant_type=client_credential");
-		LOG.info(response);
-	}
 	@Override
 	public WechatAuthResponse getSession(String code) {
 		if(!StringUtils.hasText(code)) {
@@ -78,7 +70,7 @@ public class WechatServiceImpl implements WechatService{
 	public WechatTokenResponse getToken() {
 		String Url = String.format("https://api.weixin.qq.com/cgi-bin/token?grant_type=%s&appid=%s&secret=%s",this.grantTypeToken,this.appId,this.secret);
 		String response = HttpConenection.getInstance().sendHttpPost(Url);
-		LOG.info(response);
+		LOG.info("获取到token：{}",response);
 		return JSON.parseObject(response, WechatTokenResponse.class);
 	}
 
@@ -92,7 +84,7 @@ public class WechatServiceImpl implements WechatService{
 		params.put("openid", openid);
 		params.put("lang", "zh_CN");
 		String response = HttpConenection.getInstance().sendHttpPost(userInfoHost, params);
-		LOG.info(response);
+		LOG.info("获取到的用户信息：{}",response);
 		return null;
 	}
 
@@ -111,10 +103,20 @@ public class WechatServiceImpl implements WechatService{
 		}
 		final String access_token = token.getAccess_token();
 		final String open_id = session.getOpen_id();
+		
 		if(StringUtils.hasText(access_token) && StringUtils.hasText(open_id)){
 			return this.getUserInfo(access_token, open_id);
 		}
 		return null;
+	}
+	
+	public static void main(String[] args) {
+		Map<String, String> params = new HashMap<>();
+		params.put("access_token", "15_WO1RajrEiL205ZCU0wcNwYIww8IdzBHcb9df12PW0jHUPdBWOtJsqQb7t0trlvra_bh-7ad3m8GT5b8Wdgo9wIuk2hf2wk4kSnZjP8O2FwmT1nCF9jz-gEiA_t3iuIYUJiuninus3on1HHNWQIRjACAWOX");
+		params.put("openid", "oWUh35CFPZyeGOh_G3YxfOkJyIUk");
+		params.put("lang", "zh_CN");
+		String response = HttpConenection.getInstance().sendHttpPost("https://api.weixin.qq.com/cgi-bin/user/info", params);
+		LOG.info("获取到的用户信息：{}",response);
 	}
 
 }
