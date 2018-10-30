@@ -18,6 +18,7 @@ import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.Order;
 import com.gopher.system.model.OrderCommodity;
+import com.gopher.system.model.User;
 import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
@@ -89,7 +90,15 @@ public class OrderServiceImpl implements OrderService{
 		order.setCustomerId(cu.getCustomerId());
 		return orderDAO.findList(order);
 	}
-
+    private String getUserName(int userId){
+    	User user = userService.getUerById(userId);
+    	String userName = "";
+    	if(null != user){
+    		userName = user.getName();
+    	}
+    	return userName;
+    	
+    }
 	@Override
 	public OrderDetailResponse getOrderDetail(int id) {
 		if(id <=0) {
@@ -102,6 +111,8 @@ public class OrderServiceImpl implements OrderService{
 			result.setId(order.getId());
 			result.setCreateTime(order.getCreateTime());
 			result.setUpdateTime(order.getUpdateTime());
+			result.setUpdateUser(this.getUserName(order.getUpdateUser()));
+			result.setCreateUser(this.getUserName(order.getCreateUser()));
 			result.setNumber(order.getNumber());
 			List<OrderCommodity> list = orderCommodityService.findList(id);
 			if(null != list) {
@@ -116,6 +127,7 @@ public class OrderServiceImpl implements OrderService{
 					response.setCommodityTypeName(rsp.getCommodityTypeName());
 					response.setPrice(orderCommodity.getPrice());
 					response.setUnit(orderCommodity.getUnit());
+					response.setAmount(orderCommodity.getAmount());
 					commodityList.add(response);
 				}
 				result.setCommodityList(commodityList);

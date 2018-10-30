@@ -19,7 +19,7 @@ import com.gopher.system.model.vo.request.LoginRequst;
 import com.gopher.system.model.vo.request.LogoutRequst;
 import com.gopher.system.model.vo.request.RegisterRequst;
 import com.gopher.system.model.vo.response.LoginResponse;
-import com.gopher.system.model.vo.response.WechatUserInfoResponse;
+import com.gopher.system.model.vo.response.WechatAuthResponse;
 import com.gopher.system.service.AuthService;
 import com.gopher.system.service.CacheService;
 import com.gopher.system.service.CustomerService;
@@ -57,6 +57,8 @@ public class AuthServiceImpl implements AuthService{
 		final String company  = registerRequst.getCompany();
 		final String phone    = registerRequst.getPhone();
 		final String code     = registerRequst.getCode();
+		final String nickName = registerRequst.getNickName();
+	
 		if(!StringUtils.hasText(account)){
 			throw new BusinessRuntimeException("账户不能为空");
 		}
@@ -72,7 +74,7 @@ public class AuthServiceImpl implements AuthService{
 		if(!StringUtils.hasText(code)){
 			throw new BusinessRuntimeException("微信鉴权码不能为空");
 		}
-		User userDB = userService.findOne(account);
+		User userDB = userService.getUserByAccount(account);
 		if(null != userDB){
 			throw new BusinessRuntimeException("账号已经存在,请重新输入账号");
 		}
@@ -81,9 +83,11 @@ public class AuthServiceImpl implements AuthService{
 		user.setPassword(MD5Utils.MD5(password));
 		user.setPhone(phone);
 		//TODO 直接回去用户微信信息
-		WechatUserInfoResponse userInfo = wechatService.getUserInfo(code);
-		if(null != userInfo){
-			LOG.info("根据微信鉴权码获取微信用户信息:{}",JSON.toJSONString(userInfo));
+		WechatAuthResponse rsp = wechatService.getSession(code);
+		if(null != rsp){
+			LOG.info("根据微信鉴权码获取微信用户OPENID:{}",JSON.toJSONString(rsp));
+			user.setName(nickName);
+			user.setWechat(rsp.getOpen_id());
 		}
 		Customer customerDB  = customerService.findByName(company);
 		if(null == customerDB){
@@ -115,7 +119,7 @@ public class AuthServiceImpl implements AuthService{
 		if(!StringUtils.hasText(password)){
 			throw new BusinessRuntimeException("密码不能为空");
 		}
-		User userDB = userService.findOne(account);
+		User userDB = userService.getUserByAccount(account);
 		if(null == userDB){
 			throw new BusinessRuntimeException("无效的账号,请检查账号后重新登录");
 		}

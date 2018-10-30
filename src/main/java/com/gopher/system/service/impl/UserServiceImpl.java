@@ -17,12 +17,17 @@ public class UserServiceImpl implements UserService{
 		return userDAO.insert(t);
 	}
 	@Override
-	public User findOne(String account) {
+	public User getUserByAccount(String account) {
 		User query = new User();
 		query.setAccount(account);
 		return userDAO.findOne(query);
 	}
-
+	@Override
+	public User getUerById(int id) {
+		User query = new User();
+		query.setId(id);
+		return userDAO.findOne(query);
+	}
 	@Override
 	public User getCurrentUser() {
 		Object obj = ThreadLocalUtils.getObject(ThreadLocalUtils.USER_KEY);
@@ -45,6 +50,7 @@ public class UserServiceImpl implements UserService{
 		int user_id = Integer.valueOf(obj.toString());
 		return user_id;
 	}
+
 	
 	
 

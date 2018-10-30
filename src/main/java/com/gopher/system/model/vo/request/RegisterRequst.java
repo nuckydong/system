@@ -22,8 +22,20 @@ public class RegisterRequst {
 	 * 微信 js_code 获取用户的openid和session_key
 	 */
 	private String code;
+	/**
+	 * 微信昵称
+	 */
+	private String nickName;
 	
 	
+	public String getNickName() {
+		return nickName;
+	}
+
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+
 	public String getCode() {
 		return code;
 	}

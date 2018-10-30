@@ -12,7 +12,17 @@ public class CommodityResponse {
      
      private String unit;
      
+     private int amount;
+     
      private int price;
+
+	public int getAmount() {
+		return amount;
+	}
+
+	public void setAmount(int amount) {
+		this.amount = amount;
+	}
 
 	public int getId() {
 		return id;

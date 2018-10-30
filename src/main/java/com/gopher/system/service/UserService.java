@@ -6,9 +6,11 @@ public interface UserService {
 	
 	public Integer insert(User user);
 	
-	public User findOne(final String account);
+	public User getUserByAccount(final String account);
 	
 	public User getCurrentUser();
+	
+	public User getUerById(int id);
 
 	int getCurrentUserId();
 }
