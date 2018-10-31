@@ -5,11 +5,15 @@ import java.util.List;
 import com.gopher.system.model.OrderCommodity;
 
 public class OrderRequst {
-	
+
 	private int id;
-	
+	/**
+	 * 备注、留言
+	 */
+	private String remark;
+
 	private String commodityListJson;
-	
+
 	private List<OrderCommodity> comodityList;
 
 	public List<OrderCommodity> getComodityList() {
@@ -36,6 +40,12 @@ public class OrderRequst {
 		this.id = id;
 	}
 
-    
-	
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+
 }

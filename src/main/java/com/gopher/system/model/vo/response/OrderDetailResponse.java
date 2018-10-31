@@ -1,14 +1,42 @@
 package com.gopher.system.model.vo.response;
 
-import java.util.Date;
 import java.util.List;
 
 public class OrderDetailResponse {
 	private String number;
+	private String remark;
+	private String company;
+	private String priceNumber;
+	private String phone;
+	
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	public String getCompany() {
+		return company;
+	}
+	public void setCompany(String company) {
+		this.company = company;
+	}
+	public String getPriceNumber() {
+		return priceNumber;
+	}
+	public void setPriceNumber(String priceNumber) {
+		this.priceNumber = priceNumber;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 	private int id;
-	private Date createTime;
-	private Date updateTime;
 	private List<CommodityResponse> commodityList;
+	private long createTime;
+	private long updateTime;
 	private String updateUser;
 	private String createUser;
 	
@@ -36,16 +64,16 @@ public class OrderDetailResponse {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public Date getCreateTime() {
+	public long getCreateTime() {
 		return createTime;
 	}
-	public void setCreateTime(Date createTime) {
+	public void setCreateTime(long createTime) {
 		this.createTime = createTime;
 	}
-	public Date getUpdateTime() {
+	public long getUpdateTime() {
 		return updateTime;
 	}
-	public void setUpdateTime(Date updateTime) {
+	public void setUpdateTime(long updateTime) {
 		this.updateTime = updateTime;
 	}
 	public List<CommodityResponse> getCommodityList() {

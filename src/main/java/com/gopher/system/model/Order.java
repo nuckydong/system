@@ -24,7 +24,17 @@ public class Order extends BaseModel{
 	 * 状态 逻辑删除
 	 */
 	private int state;
+	/**
+	 * 备注留言
+	 */
+	private String remark;
 	
+	public String getRemark() {
+		return remark;
+	}
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 	public int getState() {
 		return state;
 	}

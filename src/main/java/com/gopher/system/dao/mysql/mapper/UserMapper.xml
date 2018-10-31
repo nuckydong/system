@@ -7,10 +7,8 @@
 	<resultMap id="userMap" type="com.gopher.system.model.User">
 		<result property="id" column="id" javaType="java.lang.Integer"
 			jdbcType="INTEGER" />
-		<result property="createTime" column="create_time" javaType="java.util.Date"
-			jdbcType="DATE" />
-		<result property="updateTime" column="update_time" javaType="java.util.Date"
-			jdbcType="DATE" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
 		<result property="createUser" column="create_user" javaType="java.lang.Integer"
 			jdbcType="INTEGER" />
 		<result property="updateUser" column="update_user" javaType="java.lang.Integer"

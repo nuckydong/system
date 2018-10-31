@@ -7,28 +7,33 @@
 	<resultMap id="orderMap" type="com.gopher.system.model.Order">
 		<result property="id" column="id" javaType="java.lang.Integer"
 			jdbcType="INTEGER" />
-		<result property="createTime" column="create_time" javaType="java.util.Date"
-			jdbcType="DATE" />
-		<result property="updateTime" column="update_time" javaType="java.util.Date"
-			jdbcType="DATE" />
-		<result property="createUser" column="create_user" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
-		<result property="updateUser" column="update_user" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
-		<result property="number" column="number" javaType="java.lang.String"
-			jdbcType="VARCHAR" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="createUser" column="create_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="updateUser" column="update_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="number" column="number"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="remark" column="remark"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="customerId" column="customer_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
 	</resultMap>
 
 
-	<update id="update" parameterType="com.gopher.system.model.Order">
+	<update id="update"
+		parameterType="com.gopher.system.model.Order">
 		UPDATE `order`
 		<set>
-		    state = #{state},
+			state = #{state},
 			update_time = now(),
-			update_user = #{updateUser}
+			remark = #{remark},
+			update_user =
+			#{updateUser}
 		</set>
 		<where>
-		    state = 0
+			state = 0
 			<if test="number != null and number != '' ">
 				number = #{number}
 			</if>
@@ -36,7 +41,7 @@
 				id = #{id}
 			</if>
 			<if test="customerId > 0">
-			   customerId = #{customerId}
+				customerId = #{customerId}
 			</if>
 		</where>
 	</update>
@@ -45,13 +50,13 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
 		parameterType="com.gopher.system.model.Order">
 		INSERT INTO `order`
-		(number,state,customer_id,create_user,update_user,create_time,update_time)
+		(number,remark,state,customer_id,create_user,update_user,create_time,update_time)
 		VALUES
-		(#{number},#{state},#{customerId},#{createUser},#{updateUser},now(),now())
+		(#{number},#{remark},#{state},#{customerId},#{createUser},#{updateUser},now(),now())
 	</insert>
 
-	<select id="findOne" parameterType="com.gopher.system.model.Order"
-		resultMap="orderMap">
+	<select id="findOne"
+		parameterType="com.gopher.system.model.Order" resultMap="orderMap">
 		SELECT * FROM `order`
 		<where>
 			<if test="number != null and number != '' ">
@@ -63,11 +68,11 @@
 		</where>
 	</select>
 
-	<select id="findList" parameterType="com.gopher.system.model.Order"
-		resultMap="orderMap">
+	<select id="findList"
+		parameterType="com.gopher.system.model.Order" resultMap="orderMap">
 		SELECT * FROM `order`
 		<where>
-		     state = 0
+			state = 0
 			<if test="createUser >0 ">
 				AND create_user = #{createUser}
 			</if>

@@ -6,8 +6,9 @@ import org.springframework.stereotype.Service;
 import com.gopher.system.dao.mysql.CustomerDAO;
 import com.gopher.system.model.Customer;
 import com.gopher.system.service.CustomerService;
+
 @Service
-public class CustomerServiceImpl implements CustomerService{
+public class CustomerServiceImpl implements CustomerService {
 	@Autowired
 	private CustomerDAO customerDAO;
 
@@ -20,6 +21,13 @@ public class CustomerServiceImpl implements CustomerService{
 	public Customer findByName(String customerName) {
 		Customer customer = new Customer();
 		customer.setName(customerName);
+		return customerDAO.findOne(customer);
+	}
+
+	@Override
+	public Customer findById(int customerId) {
+		Customer customer = new Customer();
+		customer.setId(customerId);
 		return customerDAO.findOne(customer);
 	}
 

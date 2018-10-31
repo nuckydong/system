@@ -15,6 +15,7 @@ import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.constant.State;
 import com.gopher.system.dao.mysql.OrderDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
+import com.gopher.system.model.Customer;
 import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.Order;
 import com.gopher.system.model.OrderCommodity;
@@ -23,6 +24,7 @@ import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
 import com.gopher.system.service.CommodityService;
+import com.gopher.system.service.CustomerService;
 import com.gopher.system.service.CustomerUserService;
 import com.gopher.system.service.OrderCommodityService;
 import com.gopher.system.service.OrderService;
@@ -41,6 +43,8 @@ public class OrderServiceImpl implements OrderService{
 	private CommodityService commodtityService;
 	@Autowired
 	private CustomerUserService customerUserService;
+	@Autowired
+	private CustomerService customerService;
 	
     @Transactional
 	@Override
@@ -90,6 +94,8 @@ public class OrderServiceImpl implements OrderService{
 		order.setCustomerId(cu.getCustomerId());
 		return orderDAO.findList(order);
 	}
+	
+	
     private String getUserName(int userId){
     	User user = userService.getUerById(userId);
     	String userName = "";
@@ -97,8 +103,9 @@ public class OrderServiceImpl implements OrderService{
     		userName = user.getName();
     	}
     	return userName;
-    	
     }
+    
+    
 	@Override
 	public OrderDetailResponse getOrderDetail(int id) {
 		if(id <=0) {
@@ -109,10 +116,22 @@ public class OrderServiceImpl implements OrderService{
 		if(null != order) {
 			result = new OrderDetailResponse();
 			result.setId(order.getId());
-			result.setCreateTime(order.getCreateTime());
-			result.setUpdateTime(order.getUpdateTime());
+			result.setCreateTime(order.getCreateTime().getTime());
+			result.setUpdateTime(order.getUpdateTime().getTime());
 			result.setUpdateUser(this.getUserName(order.getUpdateUser()));
 			result.setCreateUser(this.getUserName(order.getCreateUser()));
+			result.setRemark(order.getRemark());
+			result.setNumber(order.getNumber());
+			/**
+			 * 当前客户使用的定价号
+			 */
+			result.setPriceNumber("");
+			final int customerId = order.getCustomerId();
+			Customer customer = customerService.findById(customerId);
+			if(null != customer) {
+				result.setCompany(customer.getName());
+				result.setPhone(customer.getMobilePhone());
+			}
 			result.setNumber(order.getNumber());
 			List<OrderCommodity> list = orderCommodityService.findList(id);
 			if(null != list) {
