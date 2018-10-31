@@ -11,13 +11,17 @@ import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.dao.mysql.CommodityDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.Commodity;
+import com.gopher.system.model.CommodityType;
 import com.gopher.system.model.vo.request.CommodityListRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.service.CommodityService;
+import com.gopher.system.service.CommodityTypeService;
 @Service
 public class CommodityServiceImpl implements CommodityService{
 	@Autowired
     private CommodityDAO commodityDAO;
+	@Autowired
+	private CommodityTypeService commodityTypeService;
 	@Override
 	public Integer insert(Commodity commodity) {
 		return commodityDAO.insert(commodity);
@@ -36,7 +40,10 @@ public class CommodityServiceImpl implements CommodityService{
 			for (Commodity cmmodity : list) {
 				CommodityResponse cr = new CommodityResponse();
 				BeanUtils.copyProperties(cmmodity, cr);
-				cr.setCommodityTypeName("客餐");
+				CommodityType commodityType = commodityTypeService.getCommodityTypeById(cmmodity.getCommodityTypeId());
+				if(commodityType != null){
+					cr.setCommodityTypeName(commodityType.getName());
+				}
 				result.add(cr);
 			}
 			
@@ -56,7 +63,10 @@ public class CommodityServiceImpl implements CommodityService{
 		}
 		CommodityResponse cr = new CommodityResponse();
 		BeanUtils.copyProperties(commodityDB, cr);
-		cr.setCommodityTypeName("客餐");
+		CommodityType commodityType = commodityTypeService.getCommodityTypeById(commodityDB.getCommodityTypeId());
+		if(commodityType != null){
+			cr.setCommodityTypeName(commodityType.getName());
+		}
 		return cr;
 	}
 
