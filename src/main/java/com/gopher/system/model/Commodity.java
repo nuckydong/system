@@ -1,5 +1,7 @@
 package com.gopher.system.model;
 
+import org.springframework.data.annotation.Transient;
+
 public class Commodity extends BaseModel{
 	/**
 	 * 
@@ -21,7 +23,15 @@ public class Commodity extends BaseModel{
 	 * 
 	 */
 	private String unit;
+	@Transient
+	private int commodityId;
 	
+	public int getCommodityId() {
+		return super.getId();
+	}
+	public void setCommodityId(int commodityId) {
+		this.commodityId = commodityId;
+	}
 	public String getUnit() {
 		return unit;
 	}

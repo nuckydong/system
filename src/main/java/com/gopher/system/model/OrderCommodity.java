@@ -25,9 +25,23 @@ public class OrderCommodity {
 	 * 计价单位
 	 */
 	private String unit;
-	
+	/**
+	 * 预定数量
+	 */
 	private int amount;
+	/**
+	 * 实际数量
+	 */
+	private int realAmount;
 	
+
+	public int getRealAmount() {
+		return realAmount;
+	}
+
+	public void setRealAmount(int realAmount) {
+		this.realAmount = realAmount;
+	}
 
 	public String getUnit() {
 		return unit;

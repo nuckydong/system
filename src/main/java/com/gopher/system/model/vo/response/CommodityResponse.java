@@ -1,5 +1,7 @@
 package com.gopher.system.model.vo.response;
 
+import org.springframework.data.annotation.Transient;
+
 public class CommodityResponse {
 	
      private int id;
@@ -15,6 +17,16 @@ public class CommodityResponse {
      private int amount;
      
      private int price;
+ 	@Transient
+ 	private int commodityId;
+
+	public int getCommodityId() {
+		return commodityId;
+	}
+
+	public void setCommodityId(int commodityId) {
+		this.commodityId = commodityId;
+	}
 
 	public int getAmount() {
 		return amount;

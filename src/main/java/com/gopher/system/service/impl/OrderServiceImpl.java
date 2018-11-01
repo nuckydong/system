@@ -140,6 +140,7 @@ public class OrderServiceImpl implements OrderService{
 					final int commodityId = orderCommodity.getCommodityId();
 					CommodityResponse response = new CommodityResponse();
 					response.setId(commodityId);
+					response.setCommodityId(commodityId);
 					CommodityResponse rsp = commodtityService.getCommodity(commodityId);
 					response.setName(rsp.getName());
 					response.setCommodityTypeId(rsp.getCommodityTypeId());

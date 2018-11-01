@@ -44,6 +44,7 @@ public class CommodityServiceImpl implements CommodityService{
 				if(commodityType != null){
 					cr.setCommodityTypeName(commodityType.getName());
 				}
+				cr.setCommodityId(cmmodity.getId());
 				result.add(cr);
 			}
 			
