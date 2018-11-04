@@ -1,5 +1,7 @@
 package com.gopher.system.dao.mysql;
 
+import java.util.List;
+
 import com.gopher.system.model.CustomerPrice;
 import com.gopher.system.model.Page;
 
@@ -9,8 +11,12 @@ public interface CustomerPriceDAO {
 	
 	public void update (CustomerPrice customerPrice);
 	
-	public CustomerPrice get(CustomerPrice customerPrice);
+	public void delete (CustomerPrice customerPrice);
 	
-	public Page<CustomerPrice> getPage(Page<CustomerPrice> page);
+	public CustomerPrice findOne(CustomerPrice customerPrice);
+	
+	public int count(Page<CustomerPrice> page);
+	
+	public List<CustomerPrice> findList(Page<CustomerPrice> page);
 
 }

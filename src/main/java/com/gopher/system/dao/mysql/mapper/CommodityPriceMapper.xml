@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gopher.system.dao.mysql.CommodityPriceDAO">
+	<resultMap id="commodityPriceMap"
+		type="com.gopher.system.model.CommodityPrice">
+		<result property="id" column="id" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+		<result property="commodityId" column="commodity_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="priceGroupId" column="price_group_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="price" column="price"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+	</resultMap>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.gopher.system.model.CommodityPrice">
+		INSERT INTO commodity_price
+		(commodity_id,price_group_id,price)
+		VALUES
+		(#{commodityId},#{priceGroupId},#{price})
+	</insert>
+
+	<update id="update"
+		parameterType="com.gopher.system.model.CommodityPrice">
+		UPDATE commodity_price
+		<set>
+			commodity_id = #{commodityId},
+			price_group_id = #{priceGroupId},
+			price = #{price}
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+
+	<delete id="delete"
+		parameterType="com.gopher.system.model.CommodityPrice">
+		DELETE FROM commodity_price
+		<where>
+			<if test="id > 0">
+				id = #{id}
+			</if>
+			<if test="commodityId > 0">
+				commodity_id = #{commodityId}
+			</if>
+			<if test="priceGroupId > 0">
+				price_group_id = #{price_group_id}
+			</if>
+		</where>
+	</delete>
+
+	<select id="findOne"
+		parameterType="java.lang.Integer"
+		resultMap="commodityPriceMap">
+		SELECT * FROM commodity_price
+		<where>
+			id = #{id}
+		</where>
+	</select>
+	
+	<select id="findList"
+		parameterType="com.gopher.system.model.CommodityPrice"
+		resultMap="commodityPriceMap">
+		SELECT * FROM commodity_price
+		<where>
+				<if test="commodityId > 0">
+				commodity_id = #{commodityId}
+			</if>
+			<if test="priceGroupId > 0">
+				price_group_id = #{priceGroupId}
+			</if>
+		</where>
+	</select>
+
+
+
+</mapper>

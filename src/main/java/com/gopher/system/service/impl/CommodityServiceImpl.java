@@ -70,5 +70,12 @@ public class CommodityServiceImpl implements CommodityService{
 		}
 		return cr;
 	}
+	@Override
+	public Commodity get(int id) {
+		Commodity query = new Commodity();
+		query.setId(id);
+		Commodity  commodityDB = commodityDAO.findOne(query);
+		return commodityDB;
+	}
 
 }

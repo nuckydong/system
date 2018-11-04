@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gopher.system.dao.mysql.PriceGroupDAO">
+	<resultMap id="priceGroupMap"
+		type="com.gopher.system.model.PriceGroup">
+		<result property="id" column="id" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="createUser" column="create_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="updateUser" column="update_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
+		<result property="name" column="name"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="number" column="number"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="remark" column="remark"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+	</resultMap>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.gopher.system.model.PriceGroup">
+		INSERT INTO price_group
+		(name,number,remark,state,create_user,update_user,create_time,update_time)
+		VALUES
+		(#{name},#{number},#{remark},0,#{createUser},#{updateUser},now(),now())
+	</insert>
+
+	<update id="update"
+		parameterType="com.gopher.system.model.PriceGroup">
+		<set>
+			name = #{name},
+			number = #{number},
+			remark = #{remark},
+			state = #{state},
+			update_time = now(),
+			update_user = #{updateUser}
+		</set>
+		<where>
+			state = #{state}
+			<if test="id > 0">
+				AND id = #{id}
+			</if>
+			<if test="number  != null and number != ''">
+				AND number = #{number}
+			</if>
+		</where>
+
+	</update>
+
+	<select id="findOne"
+		parameterType="com.gopher.system.model.PriceGroup"
+		resultMap="priceGroupMap">
+		SELECT * FROM price_group
+		<where>
+			state = #{state}
+			<if test="id > 0">
+				AND id = #{id}
+			</if>
+			<if test="number  != null and number != ''">
+				AND number = #{number}
+			</if>
+		</where>
+	</select>
+
+	<select id="findList"
+		parameterType="com.gopher.system.model.Commodity"
+		resultMap="priceGroupMap">
+		SELECT * FROM priceGroupMap
+		<where>
+			state = #{state}
+			<if test="name != null and name != '' ">
+				AND name LIKE CONCAT('%',#{name},'%')
+			</if>
+			<if test="number  != null and number != '' ">
+				AND number = #{number}
+			</if>
+		</where>
+	</select>
+
+
+
+</mapper>

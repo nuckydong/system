@@ -16,8 +16,12 @@ public interface CommodityPriceDAO {
 	 */
 	public void insert(CommodityPrice commodityPrice);
 	
+	public void update(CommodityPrice commodityPrice);
+	
 	public void delete(CommodityPrice commodityPrice);
 	
-	public List<CommodityPrice> findList(int privateGroupId);
+	public CommodityPrice findOne(int id);
+	
+	public List<CommodityPrice> findList(CommodityPrice commodityPrice);
 
 }

@@ -7,6 +7,7 @@ package com.gopher.system.model;
  *
  */
 public class CommodityPrice {
+	
 	private int id;
 	/**
 	 * 对应商品

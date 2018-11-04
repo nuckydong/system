@@ -65,6 +65,7 @@ public class OrderServiceImpl implements OrderService{
 		final int userId = userService.getCurrentUserId();
 		order.setCreateUser(userId);
 		order.setUpdateUser(userId);
+		order.setRemark(orderRequst.getRemark());
 		CustomerUser cu = customerUserService.get(userId);
 		if(null == cu){
 			throw new BusinessRuntimeException("根据用户ID找不到对应的客户");
@@ -193,6 +194,7 @@ public class OrderServiceImpl implements OrderService{
 			throw new BusinessRuntimeException("无效的订单ID");
 		}
 		Order order = this.getOrder(orderId);
+		order.setRemark(orderRequst.getRemark());
 		order.setUpdateUser(userService.getCurrentUserId());
 		orderDAO.update(order);
 		//删除之前的关联

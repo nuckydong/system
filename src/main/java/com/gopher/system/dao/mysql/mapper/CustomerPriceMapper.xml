@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.gopher.system.dao.mysql.CustomerPriceDAO">
+	<resultMap id="customerPriceMap"
+		type="com.gopher.system.model.CustomerPrice">
+		<result property="id" column="id" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+		<result property="customerId" column="customer_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="priceGroupId" column="price_group_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+	</resultMap>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.gopher.system.model.CustomerPrice">
+		INSERT INTO customer_price
+		(customer_id,price_group_id)
+		VALUES
+		(#{customerId},#{priceGroupId})
+	</insert>
+
+	<update id="update"
+		parameterType="com.gopher.system.model.CustomerPrice">
+		UPDATE customer_price
+		<set>
+			customer_id = #{customerId},
+			price_group_id = #{priceGroupId},
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+
+	<delete id="delete"
+		parameterType="com.gopher.system.model.CustomerPrice">
+		DELETE FROM customer_price
+		<where>
+			<if test="id > 0">
+				id = #{id}
+			</if>
+			<if test="customer_id > 0">
+				customer_id = #{customerId}
+			</if>
+			<if test="priceGroupId > 0">
+				price_group_id = #{price_group_id}
+			</if>
+		</where>
+	</delete>
+	
+	<select id="findOne" parameterType="com.gopher.system.model.CustomerPrice" resultMap="customerPriceMap">
+	SELECT * FROM customer_price
+			<where>
+			<if test="id > 0">
+				id = #{id}
+			</if>
+			<if test="customer_id > 0">
+				customer_id = #{customerId}
+			</if>
+			</where>
+	</select>
+
+
+
+
+</mapper>

@@ -16,6 +16,18 @@ public class PriceGroup extends BaseModel{
 	private String number;
 	// 备注
 	private String remark;
+	/**
+	 * @see com.gopher.system.constant.State
+	 */
+	private int state;
+	
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
 
 	public String getNumber() {
 		return number;
