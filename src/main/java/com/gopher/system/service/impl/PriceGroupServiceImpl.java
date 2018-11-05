@@ -17,6 +17,7 @@ import com.gopher.system.model.Commodity;
 import com.gopher.system.model.CommodityPrice;
 import com.gopher.system.model.Page;
 import com.gopher.system.model.PriceGroup;
+import com.gopher.system.model.vo.request.PriceGroupPageRequst;
 import com.gopher.system.model.vo.request.PriceGroupRequest;
 import com.gopher.system.model.vo.response.CommodityPriceResponse;
 import com.gopher.system.model.vo.response.PriceGroupResponse;
@@ -170,8 +171,28 @@ public class PriceGroupServiceImpl implements PriceGroupService{
 	}
 
 	@Override
-	public Page<PriceGroup> getPage( Page<PriceGroup> page) {
-		return null;
+	public Page<PriceGroup> getPage(PriceGroupPageRequst priceGroupPageRequst) {
+		if(null == priceGroupPageRequst) {
+			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
+		}
+		final int pageNumber = priceGroupPageRequst.getPageNumber();
+		final int pageSize  = priceGroupPageRequst.getPageSize();
+		priceGroupPageRequst.setSkip((pageNumber -1) * pageSize);
+		final int totalCount = priceGroupDAO.count(priceGroupPageRequst);
+		List<PriceGroup>  list = priceGroupDAO.findList(priceGroupPageRequst);
+		Page<PriceGroup> result = new Page<PriceGroup>();
+	    result.setList(list);
+	    result.setTotalCount(totalCount);
+	    result.setPageNumber(pageNumber);
+	    result.setPageSize(pageSize);
+		return result;
+	}
+
+	@Override
+	public PriceGroup getPriceGroup(int id) {
+		PriceGroup priceGroup =new PriceGroup();
+		priceGroup.setId(id);
+		return priceGroupDAO.findOne(priceGroup);
 	}
 
 }

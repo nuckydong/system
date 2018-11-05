@@ -36,7 +36,8 @@
 			name = #{name},
 			number = #{number},
 			remark = #{remark},
-			state = #{state},
+			state =
+			#{state},
 			update_time = now(),
 			update_user = #{updateUser}
 		</set>
@@ -68,9 +69,25 @@
 	</select>
 
 	<select id="findList"
-		parameterType="com.gopher.system.model.Commodity"
+		parameterType="com.gopher.system.model.vo.request.PriceGroupPageRequst"
 		resultMap="priceGroupMap">
-		SELECT * FROM priceGroupMap
+		SELECT * FROM price_group
+		<where>
+			state = #{state}
+			<if test="name != null and name != '' ">
+				AND name LIKE CONCAT('%',#{name},'%')
+			</if>
+			<if test="number  != null and number != '' ">
+				AND number = #{number}
+			</if>
+		</where>
+		limit #{skip},#{pageSize}
+	</select>
+
+	<select id="count"
+		parameterType="com.gopher.system.model.vo.request.PriceGroupPageRequst"
+		resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM price_group
 		<where>
 			state = #{state}
 			<if test="name != null and name != '' ">

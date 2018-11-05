@@ -24,6 +24,7 @@ import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
 import com.gopher.system.service.CommodityService;
+import com.gopher.system.service.CustomerPriceService;
 import com.gopher.system.service.CustomerService;
 import com.gopher.system.service.CustomerUserService;
 import com.gopher.system.service.OrderCommodityService;
@@ -45,6 +46,8 @@ public class OrderServiceImpl implements OrderService{
 	private CustomerUserService customerUserService;
 	@Autowired
 	private CustomerService customerService;
+	@Autowired
+    private CustomerPriceService  customerPriceService;
 	
     @Transactional
 	@Override
@@ -123,11 +126,12 @@ public class OrderServiceImpl implements OrderService{
 			result.setCreateUser(this.getUserName(order.getCreateUser()));
 			result.setRemark(order.getRemark());
 			result.setNumber(order.getNumber());
+			final int customerId = order.getCustomerId();
 			/**
 			 * 当前客户使用的定价号
 			 */
-			result.setPriceNumber("");
-			final int customerId = order.getCustomerId();
+			//TODO 
+			result.setPriceNumber(customerPriceService.getPriceNumberByCustomerId(customerId));
 			Customer customer = customerService.findById(customerId);
 			if(null != customer) {
 				result.setCompany(customer.getName());

@@ -1,4 +1,5 @@
 package com.gopher.system.model;
+
 /**
  * 定价组
  * @author nucky
@@ -20,7 +21,7 @@ public class PriceGroup extends BaseModel{
 	 * @see com.gopher.system.constant.State
 	 */
 	private int state;
-	
+
 	public int getState() {
 		return state;
 	}

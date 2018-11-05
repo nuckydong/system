@@ -24,6 +24,14 @@ public class CommodityServiceImpl implements CommodityService{
 	private CommodityTypeService commodityTypeService;
 	@Override
 	public Integer insert(Commodity commodity) {
+		if(null == commodity) {
+			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
+		}
+		final String name = commodity.getName();
+		final String unit = commodity.getUnit();
+		final int type = commodity.getCommodityTypeId();
+	    final int price = commodity.getPrice();
+	    
 		return commodityDAO.insert(commodity);
 	}
 	@Override

@@ -3,6 +3,7 @@ package com.gopher.system.dao.mysql;
 import java.util.List;
 
 import com.gopher.system.model.PriceGroup;
+import com.gopher.system.model.vo.request.PriceGroupPageRequst;
 
 public interface PriceGroupDAO {
 	
@@ -12,7 +13,7 @@ public interface PriceGroupDAO {
 	
 	public PriceGroup findOne(PriceGroup priceGroup);
     
-	public List<PriceGroup> findList(PriceGroup priceGroup);
+	public List<PriceGroup> findList(PriceGroupPageRequst priceGroupPageRequst);
 	
-	public int count(PriceGroup priceGroup);
+	public int count(PriceGroupPageRequst priceGroupPageRequst);
 }
