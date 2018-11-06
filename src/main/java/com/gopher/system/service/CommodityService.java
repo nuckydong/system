@@ -14,5 +14,9 @@ public interface CommodityService {
 	
 	public Integer insert(Commodity commodity);
 	
+	public void update(Commodity comodity);
+	
+	public void delete(int id);
+	
 	List<CommodityResponse> getCommodityList(CommodityListRequst commodityListRequst);
 }

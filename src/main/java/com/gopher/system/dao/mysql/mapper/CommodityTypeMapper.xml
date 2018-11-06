@@ -54,9 +54,14 @@
 		</where>
 	</select>
 
-	<select id="findList" parameterType="com.gopher.system.model.CommodityType"
+	<select id="findList" parameterType="java.lang.String"
 		resultMap="commodityTypeMap">
 		SELECT * FROM commodity_type
+		<where>
+		<if test="name != null and name != ''">
+		name LIKE CONCAT('%',#{name},'%')
+		</if>
+		</where>
 	</select>
 
 

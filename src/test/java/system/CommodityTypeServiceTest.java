@@ -11,7 +11,7 @@ public class CommodityTypeServiceTest extends BaseTest{
 	private CommodityTypeService commodityTypeService;
 	@Test
 	public void getList(){
-		System.out.println(JSON.toJSONString(commodityTypeService.getCommodityTypeList()));
+		System.out.println(JSON.toJSONString(commodityTypeService.getCommodityTypeList(null)));
 	}
 
 }

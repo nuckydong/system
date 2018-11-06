@@ -8,7 +8,7 @@ public interface CommodityTypeService {
 	
 	public CommodityType getCommodityTypeById(int id);
 	
-	public List<CommodityType> getCommodityTypeList();
+	public List<CommodityType> getCommodityTypeList(String name);
 	
 	public void update(CommodityType commodityType);
 	

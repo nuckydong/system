@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.dao.mysql.CommodityDAO;
@@ -31,6 +32,18 @@ public class CommodityServiceImpl implements CommodityService{
 		final String unit = commodity.getUnit();
 		final int type = commodity.getCommodityTypeId();
 	    final int price = commodity.getPrice();
+	    if(!StringUtils.hasText(name)) {
+			throw new BusinessRuntimeException("商品名称不能为空");
+	    }
+	    if(!StringUtils.hasText(unit)) {
+			throw new BusinessRuntimeException("商品价格单位不能为空");
+	    }
+	    if(type <= 0) {
+			throw new BusinessRuntimeException("请选择商品类型");
+	    }
+	    if(price <= 0) {
+	    	throw new BusinessRuntimeException("无效的商品价格");
+	    }
 	    
 		return commodityDAO.insert(commodity);
 	}
@@ -84,6 +97,41 @@ public class CommodityServiceImpl implements CommodityService{
 		query.setId(id);
 		Commodity  commodityDB = commodityDAO.findOne(query);
 		return commodityDB;
+	}
+	@Override
+	public void update(Commodity commodity) {
+		if(null == commodity) {
+			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
+		}
+		if(commodity.getId() <=0) {
+			throw new BusinessRuntimeException("无效的商品ID");
+		}
+		final String name = commodity.getName();
+		final String unit = commodity.getUnit();
+		final int type = commodity.getCommodityTypeId();
+	    final int price = commodity.getPrice();
+	    if(!StringUtils.hasText(name)) {
+			throw new BusinessRuntimeException("商品名称不能为空");
+	    }
+	    if(!StringUtils.hasText(unit)) {
+			throw new BusinessRuntimeException("商品价格单位不能为空");
+	    }
+	    if(type <= 0) {
+			throw new BusinessRuntimeException("请选择商品类型");
+	    }
+	    if(price <= 0) {
+	    	throw new BusinessRuntimeException("无效的商品价格");
+	    }
+		commodityDAO.update(commodity);
+	}
+	@Override
+	public void delete(int id) {
+		if(id <=0) {
+			throw new BusinessRuntimeException("无效的商品ID");
+		}
+		Commodity query = new Commodity();
+		query.setId(id);
+		commodityDAO.delete(query);
 	}
 
 }

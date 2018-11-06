@@ -8,7 +8,7 @@ public interface CommodityTypeDAO {
 	
 	public Integer insert(CommodityType commodityType);
 	
-	public List<CommodityType> findList();
+	public List<CommodityType> findList(String name);
 	
 	public CommodityType findOne(int id);
 	
