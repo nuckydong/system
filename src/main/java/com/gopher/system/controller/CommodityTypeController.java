@@ -15,7 +15,7 @@ public class CommodityTypeController {
 	@Autowired
 	private CommodityTypeService commodityTypeService;
 	@GetMapping(path="/getList")
-	public Result getList(@RequestParam (name = "name") String name) {
+	public Result getList(@RequestParam (name = "name",defaultValue="") String name) {
 		Result result = new Result();
 		result.setData(commodityTypeService.getCommodityTypeList(name));
 		return result;

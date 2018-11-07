@@ -54,7 +54,7 @@
 		</where>
 	</select>
 
-	<select id="findList" parameterType="java.lang.String"
+	<select id="findList" parameterType="com.gopher.system.model.CommodityType"
 		resultMap="commodityTypeMap">
 		SELECT * FROM commodity_type
 		<where>

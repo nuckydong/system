@@ -39,13 +39,13 @@ public class CommodityController {
 		commodityService.update(commodity);
 		return result;
 	}
+	
 	@GetMapping(path="/delete")
 	public Result delete(@RequestParam(name = "id",defaultValue="0") int id) {
 		Result result = new Result();
 		commodityService.delete(id);
 		return result;
 	}
-
 	
 	@GetMapping(path="/get")
 	public Result get(@RequestParam(name = "id",defaultValue="0") int id) {

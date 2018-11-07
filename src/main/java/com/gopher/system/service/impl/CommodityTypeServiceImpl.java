@@ -29,8 +29,9 @@ public class CommodityTypeServiceImpl implements CommodityTypeService {
 
 	@Override
 	public List<CommodityType> getCommodityTypeList(String name) {
-
-		return commodityTypeDAO.findList(name);
+		CommodityType query = new CommodityType();
+		query.setName(name);
+		return commodityTypeDAO.findList(query);
 	}
 
 	@Override
