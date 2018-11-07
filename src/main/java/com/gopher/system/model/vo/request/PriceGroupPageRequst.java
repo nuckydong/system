@@ -10,6 +10,16 @@ public class PriceGroupPageRequst extends Page<PriceGroup>{
     private String number;
     
     private int skip;
+    
+    private int state;
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
 
 	public int getSkip() {
 		return skip;

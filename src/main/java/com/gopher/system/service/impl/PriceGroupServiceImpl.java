@@ -24,6 +24,7 @@ import com.gopher.system.model.vo.response.PriceGroupResponse;
 import com.gopher.system.service.CommodityPriceService;
 import com.gopher.system.service.CommodityService;
 import com.gopher.system.service.PriceGroupService;
+import com.gopher.system.service.UserService;
 @Service
 public class PriceGroupServiceImpl implements PriceGroupService{
 	@Autowired
@@ -32,6 +33,8 @@ public class PriceGroupServiceImpl implements PriceGroupService{
 	private CommodityPriceService commodityPriceService;
 	@Autowired
 	private CommodityService commodityService;
+	@Autowired
+	private UserService userService;
 	/**
 	 * 添加定价表
 	 */
@@ -56,6 +59,9 @@ public class PriceGroupServiceImpl implements PriceGroupService{
 		priceGroup.setNumber("TODO");
 		priceGroup.setRemark(remark);
 		priceGroupDAO.insert(priceGroup);
+		final int userId = userService.getCurrentUserId();
+		priceGroup.setCreateUser(userId);
+		priceGroup.setUpdateUser(userId);
 		final int priceGroupId = priceGroup.getId();
 		List<CommodityPrice> list = JSON.parseArray(commodityListJson, CommodityPrice.class);
 		if(null != list) {
@@ -92,6 +98,8 @@ public class PriceGroupServiceImpl implements PriceGroupService{
 		}
 		priceGroup.setName(name);
 		priceGroup.setRemark(remark);
+		final int userId = userService.getCurrentUserId();
+		priceGroup.setUpdateUser(userId);
 		priceGroupDAO.update(priceGroup);
 		List<CommodityPrice> listDB = commodityPriceService.getList(id);
 		if(listDB != null) {
