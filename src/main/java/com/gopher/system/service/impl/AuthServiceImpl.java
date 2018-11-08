@@ -4,6 +4,7 @@ import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.Customer;
 import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.User;
+import com.gopher.system.model.vo.request.CustomerRequst;
 import com.gopher.system.model.vo.request.LoginRequst;
 import com.gopher.system.model.vo.request.LogoutRequst;
 import com.gopher.system.model.vo.request.RegisterRequst;
@@ -94,7 +96,9 @@ public class AuthServiceImpl implements AuthService{
 			customerDB= new Customer();
 			customerDB.setName(company);
 			customerDB.setMobilePhone(phone);
-		    customerService.insert(customerDB);
+			CustomerRequst customerRequst = new CustomerRequst();
+			BeanUtils.copyProperties(customerDB, customerRequst);
+		    customerService.add(customerRequst);
 		}
 		final Integer customerId = customerDB.getId();
 		user.setUserType(User.CUSTOMER);

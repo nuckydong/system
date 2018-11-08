@@ -1,7 +1,7 @@
 package com.gopher.system.model.vo.request;
 
-import com.gopher.system.model.Page;
 import com.gopher.system.model.PriceGroup;
+import com.gopher.system.util.Page;
 
 public class PriceGroupPageRequst extends Page<PriceGroup>{
 	

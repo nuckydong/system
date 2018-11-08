@@ -10,11 +10,13 @@ public interface CustomerPriceService {
 	 */
 	public String getPriceNumberByCustomerId(int customerId);
 	
-	public CustomerPrice get(CustomerPrice customerPrice);
+	public CustomerPrice getByCustomerId(int customerId);
+	
+	public CustomerPrice get(int id);
 	
 	public void add(CustomerPrice customerPrice);
 	
-	public void delete(CustomerPrice customerPrice);
+	public void delete(int id);
 	
 	public void update(CustomerPrice customerPrice);
 

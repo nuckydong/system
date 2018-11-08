@@ -15,7 +15,6 @@ import com.gopher.system.dao.mysql.PriceGroupDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.Commodity;
 import com.gopher.system.model.CommodityPrice;
-import com.gopher.system.model.Page;
 import com.gopher.system.model.PriceGroup;
 import com.gopher.system.model.vo.request.PriceGroupPageRequst;
 import com.gopher.system.model.vo.request.PriceGroupRequest;
@@ -25,6 +24,7 @@ import com.gopher.system.service.CommodityPriceService;
 import com.gopher.system.service.CommodityService;
 import com.gopher.system.service.PriceGroupService;
 import com.gopher.system.service.UserService;
+import com.gopher.system.util.Page;
 @Service
 public class PriceGroupServiceImpl implements PriceGroupService{
 	@Autowired
@@ -194,6 +194,18 @@ public class PriceGroupServiceImpl implements PriceGroupService{
 	    result.setPageNumber(pageNumber);
 	    result.setPageSize(pageSize);
 		return result;
+	}
+	
+	@Override
+	public List<PriceGroup> getList(PriceGroupPageRequst priceGroupPageRequst) {
+		if(null == priceGroupPageRequst) {
+			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
+		}
+		final int pageNumber = 1;
+		final int pageSize  = Integer.MAX_VALUE;
+		priceGroupPageRequst.setSkip((pageNumber -1) * pageSize);
+		List<PriceGroup>  list = priceGroupDAO.findList(priceGroupPageRequst);
+		return list;
 	}
 
 	@Override

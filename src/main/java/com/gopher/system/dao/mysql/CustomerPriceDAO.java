@@ -3,7 +3,7 @@ package com.gopher.system.dao.mysql;
 import java.util.List;
 
 import com.gopher.system.model.CustomerPrice;
-import com.gopher.system.model.Page;
+import com.gopher.system.util.Page;
 
 public interface CustomerPriceDAO {
 	

@@ -49,17 +49,19 @@
 			</if>
 		</where>
 	</delete>
-	
-	<select id="findOne" parameterType="com.gopher.system.model.CustomerPrice" resultMap="customerPriceMap">
-	SELECT * FROM customer_price
-			<where>
+
+	<select id="findOne"
+		parameterType="com.gopher.system.model.CustomerPrice"
+		resultMap="customerPriceMap">
+		SELECT * FROM customer_price
+		<where>
 			<if test="id > 0">
 				id = #{id}
 			</if>
 			<if test="customer_id > 0">
 				customer_id = #{customerId}
 			</if>
-			</where>
+		</where>
 	</select>
 
 

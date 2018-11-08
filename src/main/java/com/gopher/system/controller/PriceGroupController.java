@@ -9,8 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gopher.system.controller.model.Result;
-import com.gopher.system.model.Page;
-import com.gopher.system.model.PriceGroup;
 import com.gopher.system.model.vo.request.PriceGroupPageRequst;
 import com.gopher.system.model.vo.request.PriceGroupRequest;
 import com.gopher.system.service.PriceGroupService;
@@ -53,6 +51,13 @@ public class PriceGroupController {
 	public Result getPage(PriceGroupPageRequst priceGroupPageRequst){
 		Result result = new Result();
 		result.setData(priceGroupService.getPage(priceGroupPageRequst));
+		return result;
+	}
+	
+	@GetMapping(path="/getList")
+	public Result getList(PriceGroupPageRequst priceGroupPageRequst){
+		Result result = new Result();
+		result.setData(priceGroupService.getList(priceGroupPageRequst));
 		return result;
 	}
 
