@@ -32,6 +32,7 @@
 
 	<update id="update"
 		parameterType="com.gopher.system.model.PriceGroup">
+		update price_group
 		<set>
 			name = #{name},
 			number = #{number},
@@ -42,13 +43,7 @@
 			update_user = #{updateUser}
 		</set>
 		<where>
-			state = #{state}
-			<if test="id > 0">
-				AND id = #{id}
-			</if>
-			<if test="number  != null and number != ''">
-				AND number = #{number}
-			</if>
+			 id = #{id}
 		</where>
 
 	</update>
@@ -78,7 +73,7 @@
 				AND name LIKE CONCAT('%',#{name},'%')
 			</if>
 			<if test="number  != null and number != '' ">
-				AND number = #{number}
+				AND number LIKE CONCAT('%',#{number},'%')
 			</if>
 		</where>
 		limit #{skip},#{pageSize}
@@ -94,7 +89,7 @@
 				AND name LIKE CONCAT('%',#{name},'%')
 			</if>
 			<if test="number  != null and number != '' ">
-				AND number = #{number}
+				AND number LIKE CONCAT('%',#{number},'%')
 			</if>
 		</where>
 	</select>

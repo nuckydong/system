@@ -25,10 +25,24 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
 		parameterType="com.gopher.system.model.Commodity">
 		INSERT INTO commodity
-		(name,commodity_type_id,price,create_user,update_user,create_time,update_time)
+		(name,commodity_type_id,price,unit,create_user,update_user,create_time,update_time)
 		VALUES
-		(#{name},#{commodityTypeId},#{price},#{createUser},#{updateUser},now(),now())
+		(#{name},#{commodityTypeId},#{price},#{unit},#{createUser},#{updateUser},now(),now())
 	</insert>
+
+	<update id="update"
+		parameterType="com.gopher.system.model.Commodity">
+		UPDATE commodity
+		<set>
+			name = #{name},
+			commodity_type_id = #{commodityTypeId},
+			price = #{price},
+			update_user = #{updateUser},
+			unit = #{unit},
+			update_time = now()
+		</set>
+		WHERE id = #{id}
+	</update>
 
 	<select id="findOne"
 		parameterType="com.gopher.system.model.Commodity"
@@ -53,6 +67,37 @@
 		</where>
 	</select>
 
+	<select id="getPage"
+		parameterType="com.gopher.system.model.vo.request.CommodityPageRequst"
+		resultMap="commodityMap">
+		SELECT * FROM commodity
+		<where>
+			<if test="name != null and name != '' ">
+				name LIKE CONCAT('%',#{name},'%')
+			</if>
+			<if test="commodityTypeId > 0 ">
+				commodity_type_id = #{commodityTypeId}
+			</if>
+		</where>
+		limit #{beginIndex},#{pageSize}
+	</select>
 
+	<select id="count"
+		parameterType="com.gopher.system.model.vo.request.CommodityPageRequst"
+		resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM commodity
+		<where>
+			<if test="name != null and name != '' ">
+				name LIKE CONCAT('%',#{name},'%')
+			</if>
+			<if test="commodityTypeId > 0 ">
+				commodity_type_id = #{commodityTypeId}
+			</if>
+		</where>
+	</select>
+	
+	<delete id="delete" parameterType="com.gopher.system.model.Commodity">
+	DELETE FROM commodity WHERE id =#{id}
+	</delete>
 
 </mapper>

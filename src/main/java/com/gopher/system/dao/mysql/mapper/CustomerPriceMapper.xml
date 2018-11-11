@@ -19,7 +19,7 @@
 		INSERT INTO customer_price
 		(customer_id,price_group_id)
 		VALUES
-		(#{customerId},#{priceGroupId})
+		(#{customeId},#{priceGroupId})
 	</insert>
 
 	<update id="update"
@@ -41,11 +41,11 @@
 			<if test="id > 0">
 				id = #{id}
 			</if>
-			<if test="customer_id > 0">
+			<if test="customerId > 0">
 				customer_id = #{customerId}
 			</if>
 			<if test="priceGroupId > 0">
-				price_group_id = #{price_group_id}
+				price_group_id = #{priceGroupId}
 			</if>
 		</where>
 	</delete>
@@ -58,7 +58,7 @@
 			<if test="id > 0">
 				id = #{id}
 			</if>
-			<if test="customer_id > 0">
+			<if test="customerId > 0">
 				customer_id = #{customerId}
 			</if>
 		</where>

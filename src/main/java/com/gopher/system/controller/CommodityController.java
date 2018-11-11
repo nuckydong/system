@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gopher.system.controller.model.Result;
 import com.gopher.system.model.Commodity;
 import com.gopher.system.model.vo.request.CommodityListRequst;
+import com.gopher.system.model.vo.request.CommodityPageRequst;
 import com.gopher.system.service.CommodityService;
 
 @RestController
@@ -25,7 +26,12 @@ public class CommodityController {
 		result.setData(commodityService.getCommodityList(commodityListRequst));
 		return result;
 	}
-	
+	@GetMapping(path="/getPage")
+	public Result getPage(@ModelAttribute CommodityPageRequst commodityPageRequst) {
+		Result result = new Result();
+		result.setData(commodityService.getCommodityPage(commodityPageRequst));
+		return result;
+	}
 	@PostMapping(path="/add")
 	public Result add(@ModelAttribute Commodity commodity) {
 		Result result = new Result();
@@ -40,7 +46,7 @@ public class CommodityController {
 		return result;
 	}
 	
-	@GetMapping(path="/delete")
+	@PostMapping(path="/delete")
 	public Result delete(@RequestParam(name = "id",defaultValue="0") int id) {
 		Result result = new Result();
 		commodityService.delete(id);
@@ -53,5 +59,5 @@ public class CommodityController {
 		result.setData(commodityService.getCommodity(id));
 		return result;
 	}
-
+	
 }

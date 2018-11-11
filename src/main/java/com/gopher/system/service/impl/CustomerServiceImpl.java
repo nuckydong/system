@@ -1,5 +1,7 @@
 package com.gopher.system.service.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.beans.BeanUtils;
@@ -14,10 +16,13 @@ import com.gopher.system.dao.mysql.CustomerDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.Customer;
 import com.gopher.system.model.CustomerPrice;
+import com.gopher.system.model.PriceGroup;
 import com.gopher.system.model.vo.request.CustomerPageRequst;
 import com.gopher.system.model.vo.request.CustomerRequst;
+import com.gopher.system.model.vo.response.CustomerResponse;
 import com.gopher.system.service.CustomerPriceService;
 import com.gopher.system.service.CustomerService;
+import com.gopher.system.service.PriceGroupService;
 import com.gopher.system.util.Page;
 
 @Service
@@ -42,10 +47,10 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new BusinessRuntimeException("电话不能为空");
 		}
 		Customer customer = new Customer();
-		BeanUtils.copyProperties(customer, customer);
+		BeanUtils.copyProperties(customerRequst, customer);
 		customerDAO.insert(customer);
 		final int priceGroupId = customerRequst.getPriceGroupId();
-		if (priceGroupId >= 0) {
+		if (priceGroupId > 0) {
 			final int customerId = customer.getId();
 			CustomerPrice customerPrice = new CustomerPrice();
 			customerPrice.setCustomerId(customerId);
@@ -62,10 +67,22 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public Customer findById(int customerId) {
+	public CustomerResponse findById(int customerId) {
 		Customer customer = new Customer();
 		customer.setId(customerId);
-		return customerDAO.findOne(customer);
+		customer = customerDAO.findOne(customer);
+		CustomerResponse result = null;
+		if(null != customer) {
+			result = new CustomerResponse();
+			BeanUtils.copyProperties(customer, result);
+			PriceGroup pg = getPriceGroupByCustomerId(customer.getId());
+			if(pg != null ) {
+				result.setPriceGroupId(pg.getId());
+				result.setPriceGroupName(pg.getName());
+				result.setPriceGroupNumber(pg.getNumber());
+			}
+		}
+		return result;
 	}
 
 	@Override
@@ -86,14 +103,14 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new BusinessRuntimeException("电话不能为空");
 		}
 		Customer customer = new Customer();
-		BeanUtils.copyProperties(customer, customer);
+		BeanUtils.copyProperties(customerRequst, customer);
 		customerDAO.update(customer);
 		final int priceGroupId = customerRequst.getPriceGroupId();
 		CustomerPrice customerPriceDB = customerPriceService.getByCustomerId(customerId);
 		if (null != customerPriceDB) {
 			if (!Objects.equals(priceGroupId, customerPriceDB.getPriceGroupId())) {
 				customerPriceService.delete(customerPriceDB.getId());
-				if (priceGroupId >= 0) {
+				if (priceGroupId > 0) {
 					CustomerPrice customerPrice = new CustomerPrice();
 					customerPrice.setCustomerId(customerId);
 					customerPrice.setPriceGroupId(priceGroupId);
@@ -116,10 +133,42 @@ public class CustomerServiceImpl implements CustomerService {
 			customerDAO.update(customer);
 		}
 	}
-
+	@Autowired
+	private PriceGroupService priceGroupService;
+	
+	private PriceGroup getPriceGroupByCustomerId(int customerId) {
+		CustomerPrice customerPrice = customerPriceService.getByCustomerId(customerId);
+		PriceGroup result = null;
+		if(null != customerPrice) {
+			result = priceGroupService.getPriceGroup(customerPrice.getPriceGroupId());
+		}
+		return result;
+	}
 	@Override
-	public Page<Customer> getPage(CustomerPageRequst customerPageRequst) {
-		return null;
+	public Page<CustomerResponse> getPage(CustomerPageRequst customerPageRequst) {
+		List<Customer> list =customerDAO.findPage(customerPageRequst);
+		final int totalCount = customerDAO.count(customerPageRequst);
+		Page<CustomerResponse> result= new Page<CustomerResponse>();
+		List<CustomerResponse> li = null; 
+		if(null != list) {
+			li = new ArrayList<>(list.size());
+			for (Customer customer : list) {
+				CustomerResponse rsp = new CustomerResponse();
+				BeanUtils.copyProperties(customer, rsp);
+				PriceGroup pg = getPriceGroupByCustomerId(customer.getId());
+				if(pg != null ) {
+					rsp.setPriceGroupId(pg.getId());
+					rsp.setPriceGroupName(pg.getName());
+					rsp.setPriceGroupNumber(pg.getNumber());
+				}
+				li.add(rsp);
+			}
+			result.setList(li);
+		}
+		result.setTotalCount(totalCount);
+		result.setPageNumber(customerPageRequst.getPageNumber());
+		result.setPageSize(customerPageRequst.getPageSize());
+		return result;
 	}
 
 }

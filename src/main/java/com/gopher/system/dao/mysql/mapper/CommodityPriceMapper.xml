@@ -45,10 +45,10 @@
 				id = #{id}
 			</if>
 			<if test="commodityId > 0">
-				commodity_id = #{commodityId}
+				AND commodity_id = #{commodityId}
 			</if>
 			<if test="priceGroupId > 0">
-				price_group_id = #{price_group_id}
+				AND price_group_id = #{priceGroupId}
 			</if>
 		</where>
 	</delete>

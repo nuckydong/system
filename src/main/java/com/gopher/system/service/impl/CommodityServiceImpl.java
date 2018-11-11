@@ -14,9 +14,11 @@ import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.Commodity;
 import com.gopher.system.model.CommodityType;
 import com.gopher.system.model.vo.request.CommodityListRequst;
+import com.gopher.system.model.vo.request.CommodityPageRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.service.CommodityService;
 import com.gopher.system.service.CommodityTypeService;
+import com.gopher.system.util.Page;
 @Service
 public class CommodityServiceImpl implements CommodityService{
 	@Autowired
@@ -132,6 +134,25 @@ public class CommodityServiceImpl implements CommodityService{
 		Commodity query = new Commodity();
 		query.setId(id);
 		commodityDAO.delete(query);
+	}
+	@Override
+	public Page<CommodityResponse> getCommodityPage(CommodityPageRequst commodityPageRequst) {
+		if(null == commodityPageRequst) {
+			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
+		}
+		Page<CommodityResponse> result = new Page<CommodityResponse>();
+		List<Commodity> list= commodityDAO.getPage(commodityPageRequst);
+		if(null != list && !list.isEmpty()) {
+			List<CommodityResponse> li = new ArrayList<>();
+			for (Commodity commodity : list) {
+				li.add(this.getCommodity(commodity.getId()));
+			}
+			result.setList(li);
+		}
+		final int totalCount = commodityDAO.count(commodityPageRequst);
+		result.setTotalCount(totalCount);
+		
+		return result;
 	}
 
 }

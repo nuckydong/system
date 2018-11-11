@@ -42,7 +42,8 @@
 		<set>
 			name = #{name},
 			description = #{description},
-			mobile_phone = #{mobilePhone},
+			mobile_phone =
+			#{mobilePhone},
 			telephone= #{telephone},
 			wechat = #{wechat},
 			qq = #{qq},
@@ -66,6 +67,31 @@
 			</if>
 			<if test="id > 0">
 				AND id = #{id}
+			</if>
+		</where>
+	</select>
+
+	<select id="findPage"
+		parameterType="com.gopher.system.model.vo.request.CustomerPageRequst"
+		resultMap="customerMap">
+		SELECT * FROM customer
+		<where>
+			state = 0
+			<if test="name != null and name != '' ">
+				AND name LIKE CONCAT('%',#{name},'%')
+			</if>
+		</where>
+		LIMIT #{beginIndex},#{pageSize}
+	</select>
+
+	<select id="count"
+		parameterType="com.gopher.system.model.vo.request.CustomerPageRequst"
+		resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM customer
+		<where>
+			state = 0
+			<if test="name != null and name != '' ">
+				AND name LIKE CONCAT('%',#{name},'%')
 			</if>
 		</where>
 	</select>

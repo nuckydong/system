@@ -163,7 +163,7 @@ public class PriceGroupServiceImpl implements PriceGroupService{
 		//逻辑删除
 		PriceGroup priceGroup =new PriceGroup();
 		priceGroup.setId(id);
-		 priceGroup = priceGroupDAO.findOne(priceGroup);
+		priceGroup = priceGroupDAO.findOne(priceGroup);
 		if(priceGroup == null) {
 			throw new BusinessRuntimeException("商品定价列表不能为空");
 		}

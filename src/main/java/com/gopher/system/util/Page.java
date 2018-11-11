@@ -23,7 +23,16 @@ public class Page<T> {
 	private int totalCount;
 
 	private int totalPage;
+	/**
+	 * 分页开始位置
+	 */
+	private int beginIndex;
 
+	public int getBeginIndex() {
+		this.beginIndex = (pageNumber-1)* pageSize;
+		return beginIndex;
+	}
+    
 	public List<T> getList() {
 		return list;
 	}

@@ -25,7 +25,6 @@ public class Commodity extends BaseModel{
 	private String unit;
 	@Transient
 	private int commodityId;
-	
 	public int getCommodityId() {
 		return super.getId();
 	}

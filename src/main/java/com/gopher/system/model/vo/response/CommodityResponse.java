@@ -21,6 +21,7 @@ public class CommodityResponse {
  	private int commodityId;
 
 	public int getCommodityId() {
+		this.commodityId = this.id;
 		return commodityId;
 	}
 
