@@ -1,22 +1,24 @@
 package com.gopher.system.model;
+
 /**
  * 客户的商品菜单分组
+ * 
  * @author dongyangyang
  *
  */
-public class CustomerCommodityGroup extends BaseModel{
-	
+public class CustomerCommodityGroup extends BaseModel {
+
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -7270441457487201156L;
-    /**
-     * 所属客户
-     */
+	/**
+	 * 所属客户
+	 */
 	private int customerId;
-    /**
-     * 名称
-     */
+	/**
+	 * 名称
+	 */
 	private String name;
 	/**
 	 * 备注,说明
@@ -58,6 +60,5 @@ public class CustomerCommodityGroup extends BaseModel{
 	public void setSort(int sort) {
 		this.sort = sort;
 	}
-	
 
 }

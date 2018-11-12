@@ -27,6 +27,11 @@ public class CacheServiceImpl implements CacheService{
 		redisTemplate.expire(key, timeout, TimeUnit.SECONDS);
 	}
 
+	@Override
+	public void delete(String key) {
+		redisTemplate.delete(key);
+	}
+
 
 
 }

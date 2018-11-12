@@ -1,5 +1,7 @@
 package com.gopher.system.model;
 
+import org.springframework.data.annotation.Transient;
+
 public class User extends BaseModel {
 	/**
 	 * 客户用户
@@ -23,10 +25,18 @@ public class User extends BaseModel {
     private String wechat;
     
     private int userType = CUSTOMER;
-    
-    
+    @Transient
+    private int customerId;
 
-    public int getUserType() {
+    public int getCustomerId() {
+		return customerId;
+	}
+
+	public void setCustomerId(int customerId) {
+		this.customerId = customerId;
+	}
+
+	public int getUserType() {
 		return userType;
 	}
 

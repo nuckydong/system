@@ -9,29 +9,35 @@
 			jdbcType="INTEGER" />
 		<result property="createTime" column="create_time" />
 		<result property="updateTime" column="update_time" />
-		<result property="createUser" column="create_user" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
-		<result property="updateUser" column="update_user" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
-			
-		<result property="name" column="name" javaType="java.lang.String"
-			jdbcType="VARCHAR" />
-		<result property="account" column="account" javaType="java.lang.String"
-			jdbcType="VARCHAR" />
-		<result property="password" column="password" javaType="java.lang.String"
-			jdbcType="VARCHAR" />
-		<result property="phone" column="phone" javaType="java.lang.String"
-			jdbcType="VARCHAR" />
-		<result property="wechat" column="wechat" javaType="java.lang.String"
-			jdbcType="VARCHAR" />
-		<result property="userType" column="user_type" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
+		<result property="createUser" column="create_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="updateUser" column="update_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
+		<result property="name" column="name"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="account" column="account"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="password" column="password"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="phone" column="phone"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="wechat" column="wechat"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="userType" column="user_type"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
 	</resultMap>
 
 
 	<update id="update" parameterType="com.gopher.system.model.User">
 		UPDATE user
-		SET password = #{password}
+		SET
+		password = #{password},
+		name = #{name},
+		phone = #{phone},
+		wechat = #{wechat},
+		update_time = now(),
+		update_user = #{updateUse}
 		<where>
 			<if test="account != null and account != '' ">
 				account = #{account}
@@ -43,15 +49,16 @@
 
 	</update>
 
-	<insert id="insert"  useGeneratedKeys="true" keyProperty="id" parameterType="com.gopher.system.model.User">
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.gopher.system.model.User">
 		INSERT INTO user
 		(name,account,password,phone,wechat,user_type,create_user,update_user,create_time,update_time)
 		VALUES
 		(#{name},#{account},#{password},#{phone},#{wechat},#{userType},#{createUser},#{updateUser},now(),now())
 	</insert>
 
-	<select id="findOne" parameterType="com.gopher.system.model.User"
-		resultMap="userMap">
+	<select id="findOne"
+		parameterType="com.gopher.system.model.User" resultMap="userMap">
 		SELECT * FROM user
 		<where>
 			<if test="account != null and account!='' ">
@@ -60,6 +67,27 @@
 			<if test="id > 0">
 				id = #{id}
 			</if>
+		</where>
+	</select>
+
+	<select id="findPage"
+		parameterType="com.gopher.system.model.vo.request.UserPageRequst"
+		resultMap="userMap">
+		SELECT id,name,account,wechat,phone,create_time,update_time,user_type
+		FROM user
+		<where>
+			id != #{currentLoginUser}
+		</where>
+		ORDER BY update_time DESC
+		LIMIT #{beginIndex},#{pageSize}
+	</select>
+
+	<select id="count"
+		parameterType="com.gopher.system.model.vo.request.UserPageRequst"
+		resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM user
+		<where>
+			id != #{currentLoginUser}
 		</where>
 	</select>
 

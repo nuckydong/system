@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gopher.system.dao.mysql.CustomerCommodityGroupDAO">
+	<resultMap id="customerCommodityGroupMap"
+		type="com.gopher.system.model.CustomerCommodityGroup">
+		<result property="id" column="id" javaType="java.lang.Integer"
+			jdbcType="INTEGER" />
+		<result property="createTime" column="create_time" />
+		<result property="updateTime" column="update_time" />
+		<result property="createUser" column="create_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="updateUser" column="update_user"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
+		<result property="name" column="name"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+		<result property="customerId" column="customer_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="sort" column="sort"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="remark" column="remark"
+			javaType="java.lang.String" jdbcType="VARCHAR" />
+			
+	</resultMap>
+
+	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
+		parameterType="com.gopher.system.model.CustomerCommodityGroup">
+		INSERT INTO customer_commodity_group
+		(name,customer_id,sort,remark,create_user,update_user,create_time,update_time)
+		VALUES
+		(#{name},#{customerId},#{sort},#{remark},#{createUser},#{updateUser},now(),now())
+	</insert>
+
+	<update id="update"
+		parameterType="com.gopher.system.model.CustomerCommodityGroup">
+		UPDATE customer_commodity_group
+		<set>
+			name = #{name},
+			customer_id =#{customerId},
+			`sort` =#{sort}
+			remark = #{remark},
+			update_user = #{updateUser},
+			update_time = now()
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+
+	<select id="findOne"
+		parameterType="com.gopher.system.model.CustomerCommodityGroup"
+		resultMap="customerCommodityGroupMap">
+		SELECT * FROM customer_commodity_group
+		<where>
+			<if test="id > 0">
+				AND id = #{id}
+			</if>
+		</where>
+	</select>
+
+	<select id="findList"
+		parameterType="com.gopher.system.model.CustomerCommodityGroup"
+		resultMap="customerCommodityGroupMap">
+		SELECT * FROM customer_commodity_group
+		<where>
+			state = 0
+			<if test="name != null and name != '' ">
+				AND name LIKE CONCAT('%',#{name},'%')
+			</if>
+		</where>
+	</select>
+
+
+
+</mapper>

@@ -140,7 +140,10 @@ public class AuthServiceImpl implements AuthService{
 
 	@Override
 	public void logout(LogoutRequst logoutRequst) {
-		
+		final String token = logoutRequst.getToken();
+		if(StringUtils.hasText(token)) {
+			cacheService.delete(token);
+		}
 	}
 
 }
