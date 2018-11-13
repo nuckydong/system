@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gopher.system.controller.model.Result;
+import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.service.OrderService;
 
@@ -52,5 +53,11 @@ public class OrderController{
 		result.setData(orderService.getOrderListByCurrentUser());
 		return result;
 	}
-
+	
+	@GetMapping(path="/getPage")
+	public Result getPage(@ModelAttribute OrderPageRequst orderPageRequst) {
+		Result result = new Result();
+		result.setData(orderService.getOrderPage(orderPageRequst));
+		return result;
+	}
 }

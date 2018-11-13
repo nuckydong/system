@@ -18,14 +18,14 @@
 			javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="description" column="account"
 			javaType="java.lang.String" jdbcType="VARCHAR" />
-		<result property="mobile_phone" column="mobilePhone"
+		<result property="mobilePhone" column="mobile_phone"
 			javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="telephone" column="telephone"
 			javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="wechat" column="wechat"
 			javaType="java.lang.String" jdbcType="VARCHAR" />
-		<result property="qq" column="qq" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
+		<result property="qq" column="qq" javaType="java.lang.String"
+			jdbcType="VARCHAR" />
 	</resultMap>
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
@@ -81,6 +81,7 @@
 				AND name LIKE CONCAT('%',#{name},'%')
 			</if>
 		</where>
+		ORDER BY create_time DESC
 		LIMIT #{beginIndex},#{pageSize}
 	</select>
 

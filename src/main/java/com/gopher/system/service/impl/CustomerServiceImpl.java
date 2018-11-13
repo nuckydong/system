@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.constant.State;
 import com.gopher.system.dao.mysql.CustomerDAO;
@@ -67,7 +68,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public CustomerResponse findById(int customerId) {
+	public CustomerResponse findById2(int customerId) {
 		Customer customer = new Customer();
 		customer.setId(customerId);
 		customer = customerDAO.findOne(customer);
@@ -84,7 +85,13 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 		return result;
 	}
-
+	@Override
+	public Customer findById(int customerId) {
+		Customer customer = new Customer();
+		customer.setId(customerId);
+		customer = customerDAO.findOne(customer);
+		return customer;
+	}
 	@Override
 	public void update(CustomerRequst customerRequst) {
 		if (null == customerRequst) {
@@ -161,6 +168,7 @@ public class CustomerServiceImpl implements CustomerService {
 					rsp.setPriceGroupName(pg.getName());
 					rsp.setPriceGroupNumber(pg.getNumber());
 				}
+				System.out.println(JSON.toJSONString(rsp));
 				li.add(rsp);
 			}
 			result.setList(li);

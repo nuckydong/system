@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.gopher.system.model.OrderCommodity;
+import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.service.OrderService;
 import com.gopher.system.util.ThreadLocalUtils;
@@ -47,6 +48,10 @@ public class OrderServiceTest extends BaseTest{
 	public void getOrderDetail() {
 		ThreadLocalUtils.setObject(ThreadLocalUtils.USER_KEY, 1);
 		System.out.println(JSON.toJSONString(orderService.getOrderDetail(10)));
+	}
+	@Test
+	public void getOrderPage() {
+		System.out.println(JSON.toJSONString(orderService.getOrderPage(new OrderPageRequst())));
 	}
 
 }

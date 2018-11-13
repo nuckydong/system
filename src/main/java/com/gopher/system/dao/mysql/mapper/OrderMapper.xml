@@ -82,4 +82,30 @@
 		</where>
 	</select>
 
+	<select id="findPage"
+		parameterType="com.gopher.system.model.vo.request.OrderPageRequst"
+		resultMap="orderMap">
+		SELECT * FROM `order`
+		<where>
+			state = 0
+			<if test="customerId >0 ">
+				AND customer_id = #{customerId}
+			</if>
+		</where>
+		ORDER BY create_time DESC
+		LIMIT #{beginIndex},#{pageSize}
+	</select>
+
+	<select id="count"
+		parameterType="com.gopher.system.model.vo.request.OrderPageRequst"
+		resultType="java.lang.Integer">
+		SELECT COUNT(id) FROM `order`
+		<where>
+			state = 0
+			<if test="customerId >0 ">
+				AND customer_id = #{customerId}
+			</if>
+		</where>
+	</select>
+
 </mapper>

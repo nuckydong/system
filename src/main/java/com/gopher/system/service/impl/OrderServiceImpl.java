@@ -20,6 +20,7 @@ import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.Order;
 import com.gopher.system.model.OrderCommodity;
 import com.gopher.system.model.User;
+import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
@@ -30,6 +31,7 @@ import com.gopher.system.service.CustomerUserService;
 import com.gopher.system.service.OrderCommodityService;
 import com.gopher.system.service.OrderService;
 import com.gopher.system.service.UserService;
+import com.gopher.system.util.Page;
 @Service
 public class OrderServiceImpl implements OrderService{
 	
@@ -213,6 +215,26 @@ public class OrderServiceImpl implements OrderService{
 			orderCommodityService.insert(orderCommodity);
 		}
 		return this.getOrderDetail(orderId);
+	}
+	@Override
+	public Page<Order> getOrderPage(OrderPageRequst orderPageRequst) {
+		List<Order> list = orderDAO.findPage(orderPageRequst);
+		final int totalCount = orderDAO.count(orderPageRequst);
+		Page<Order> result = null;
+		if(null != list) {
+			result = new Page<>();
+			for (Order order : list) {
+				Customer customer = customerService.findById(order.getCustomerId());
+				if(null != customer) {
+					order.setCustomerName(customer.getName());
+				}
+			}
+			result.setList(list);
+		}
+		result.setPageNumber(orderPageRequst.getPageNumber());
+		result.setPageSize(orderPageRequst.getPageSize());
+		result.setTotalCount(totalCount);
+		return result;
 	}
 
 }

@@ -78,7 +78,7 @@
 		<where>
 			id != #{currentLoginUser}
 		</where>
-		ORDER BY update_time DESC
+		ORDER BY create_time DESC
 		LIMIT #{beginIndex},#{pageSize}
 	</select>
 
@@ -90,5 +90,9 @@
 			id != #{currentLoginUser}
 		</where>
 	</select>
+	
+	<delete id="delete" parameterType = "java.lang.Integer">
+	DELETE FROM user WHERE id = #{id}
+	</delete>
 
 </mapper>

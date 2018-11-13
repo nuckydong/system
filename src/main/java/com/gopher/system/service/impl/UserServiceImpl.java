@@ -160,8 +160,10 @@ public class UserServiceImpl implements UserService {
 		UserResponse result = new UserResponse();
 		BeanUtils.copyProperties(user, result);
 		Customer customer = getCustomerByUserId(id);
-		result.setCustomerId(customer.getId());
-		result.setCustomerName(customer.getName());
+		if(customer != null) {
+			result.setCustomerId(customer.getId());
+			result.setCustomerName(customer.getName());
+		}
 		return result;
 	}
 

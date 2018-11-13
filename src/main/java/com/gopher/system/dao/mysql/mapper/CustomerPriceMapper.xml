@@ -19,7 +19,7 @@
 		INSERT INTO customer_price
 		(customer_id,price_group_id)
 		VALUES
-		(#{customeId},#{priceGroupId})
+		(#{customerId},#{priceGroupId})
 	</insert>
 
 	<update id="update"

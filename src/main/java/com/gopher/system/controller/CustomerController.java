@@ -41,7 +41,7 @@ public class CustomerController {
 	@GetMapping(path="/get")
 	public Result add(@RequestParam(name="id",defaultValue="0") int id ){
 		Result result = new Result();
-		result.setData(customerService.findById(id));
+		result.setData(customerService.findById2(id));
 		return result;
 	}
 	

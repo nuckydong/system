@@ -3,8 +3,10 @@ package com.gopher.system.service;
 import java.util.List;
 
 import com.gopher.system.model.Order;
+import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
+import com.gopher.system.util.Page;
 
 public interface OrderService{
 	/**
@@ -13,6 +15,11 @@ public interface OrderService{
 	 * @return
 	 */
 	List<Order> getOrderListByCurrentUser();
+	/**
+	 * 订单分页列表
+	 * @return
+	 */
+	Page<Order> getOrderPage(OrderPageRequst orderPageRequst);
 	/**
 	 * 新增订单 
 	 * @param orderRequst

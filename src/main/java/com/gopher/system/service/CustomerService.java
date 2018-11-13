@@ -18,6 +18,8 @@ public interface CustomerService{
 	
 	public Customer findByName(final String customerName);
 	
-	public CustomerResponse findById(final int customerId);
+	public Customer findById(final int customerId);
+	
+	public CustomerResponse findById2(final int customerId);
 
 }

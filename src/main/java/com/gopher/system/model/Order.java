@@ -1,4 +1,7 @@
 package com.gopher.system.model;
+
+import org.springframework.data.annotation.Transient;
+
 /**
  * 订单
  * @author dongyangyang
@@ -19,6 +22,8 @@ public class Order extends BaseModel{
 	 * 客户ID
 	 */
 	private int customerId;
+	@Transient
+	private String customerName;
 	/**
 	 * @see com.gopher.system.constant.State
 	 * 状态 逻辑删除
@@ -52,6 +57,12 @@ public class Order extends BaseModel{
 	}
 	public void setCustomerId(int customerId) {
 		this.customerId = customerId;
+	}
+	public String getCustomerName() {
+		return customerName;
+	}
+	public void setCustomerName(String customerName) {
+		this.customerName = customerName;
 	}
 
 }
