@@ -6,5 +6,7 @@ public interface CustomerUserService{
 	public Integer insert(CustomerUser t);
 	
 	public CustomerUser get(int userId);
+	
+	public void deleteByUser(int userId);
 
 }

@@ -15,7 +15,10 @@ public class UserServieTest extends BaseTest {
 	@Test
 	public void getPage() {
 		ThreadLocalUtils.setObject(ThreadLocalUtils.USER_KEY,3);
-		System.out.println(JSON.toJSONString(userService.getPage(new UserPageRequst())));
+		UserPageRequst upe = new UserPageRequst();
+		upe.setSearch("1");
+		upe.setCustomerId(4);
+		System.out.println(JSON.toJSONString(userService.getPage(upe)));
 	}
 
 }

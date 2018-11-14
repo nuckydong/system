@@ -3,13 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gopher.system.dao.mysql.CustomerUserDAO">
-	<resultMap id="customerUserMap" type="com.gopher.system.model.CustomerUser">
+	<resultMap id="customerUserMap"
+		type="com.gopher.system.model.CustomerUser">
 		<result property="id" column="id" javaType="java.lang.Integer"
 			jdbcType="INTEGER" />
-		<result property="userId" column="user_id" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
-		<result property="customerId" column="customer_id" javaType="java.lang.Integer"
-			jdbcType="INTEGER" />
+		<result property="userId" column="user_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="customerId" column="customer_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
 	</resultMap>
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
@@ -20,7 +21,8 @@
 		(#{userId},#{customerId})
 	</insert>
 
-	<select id="findOne" parameterType="com.gopher.system.model.CustomerUser"
+	<select id="findOne"
+		parameterType="com.gopher.system.model.CustomerUser"
 		resultMap="customerUserMap">
 		SELECT * FROM customer_user
 		<where>
@@ -28,12 +30,29 @@
 				user_id = #{userId}
 			</if>
 			<if test="id > 0">
-			id = #{id}
+				id = #{id}
 			</if>
 		</where>
 	</select>
 
-	<select id="findList" parameterType="com.gopher.system.model.CustomerUser"
+	<delete id="delete"
+		parameterType="com.gopher.system.model.CustomerUser">
+		DELETE FROM customer_user
+		<where>
+			<if test="userId > 0">
+				user_id = #{userId}
+			</if>
+			<if test="id > 0">
+				OR id = #{id}
+			</if>
+			<if test="customerId > 0">
+				OR customer_id = #{customerId}
+			</if>
+		</where>
+	</delete>
+
+	<select id="findList"
+		parameterType="com.gopher.system.model.CustomerUser"
 		resultMap="customerUserMap">
 		SELECT * FROM customer_user
 		<where>

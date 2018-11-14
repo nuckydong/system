@@ -31,13 +31,17 @@
 
 	<update id="update" parameterType="com.gopher.system.model.User">
 		UPDATE user
-		SET
-		password = #{password},
-		name = #{name},
-		phone = #{phone},
-		wechat = #{wechat},
-		update_time = now(),
-		update_user = #{updateUse}
+		<set>
+			<if test="password != null and password != ''">
+				password = #{password},
+			</if>
+			name = #{name},
+			phone = #{phone},
+			wechat = #{wechat},
+			update_time =
+			now(),
+			update_user = #{updateUser}
+		</set>
 		<where>
 			<if test="account != null and account != '' ">
 				account = #{account}
@@ -77,6 +81,19 @@
 		FROM user
 		<where>
 			id != #{currentLoginUser}
+			<if test="search != null and search != '' ">
+				AND
+				(
+				name LIKE CONCAT('%',#{search},'%')
+				OR account LIKE
+				CONCAT('%',#{search},'%')
+				OR phone LIKE CONCAT('%',#{search},'%')
+				)
+			</if>
+			<if test="customerId > 0">
+				AND id IN (SELECT user_id FROM customer_user WHERE customer_id =
+				#{customerId})
+			</if>
 		</where>
 		ORDER BY create_time DESC
 		LIMIT #{beginIndex},#{pageSize}
@@ -88,11 +105,25 @@
 		SELECT COUNT(id) FROM user
 		<where>
 			id != #{currentLoginUser}
+			<if test="search != null and search != '' ">
+				AND
+				(
+				name LIKE CONCAT('%',#{search},'%')
+				OR account LIKE
+				CONCAT('%',#{search},'%')
+				OR phone LIKE CONCAT('%',#{search},'%')
+				)
+			</if>
+			<if test="customerId > 0">
+				AND id IN (SELECT user_id FROM customer_user WHERE customer_id =
+				#{customerId})
+			</if>
 		</where>
 	</select>
-	
-	<delete id="delete" parameterType = "java.lang.Integer">
-	DELETE FROM user WHERE id = #{id}
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		DELETE FROM user WHERE id =
+		#{id}
 	</delete>
 
 </mapper>

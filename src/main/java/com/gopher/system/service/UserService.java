@@ -7,7 +7,7 @@ import com.gopher.system.util.Page;
 
 public interface UserService {
 	
-	public Integer insert(User user);
+	public void insert(User user);
 	
 	public void update(User user);
 	

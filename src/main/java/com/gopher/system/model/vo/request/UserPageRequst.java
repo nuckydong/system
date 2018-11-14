@@ -7,6 +7,16 @@ public class UserPageRequst extends Page<User>{
 	private int currentLoginUser;
 	
 	private int customerId;
+	
+	private String search;
+
+	public String getSearch() {
+		return search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
+	}
 
 	public int getCurrentLoginUser() {
 		return currentLoginUser;

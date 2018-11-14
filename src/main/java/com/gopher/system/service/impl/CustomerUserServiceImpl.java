@@ -27,5 +27,15 @@ public class CustomerUserServiceImpl implements CustomerUserService{
 		return customerUserDAO.findOne(userCustomer);
 	}
 
+	@Override
+	public void deleteByUser(int userId) {
+		if(userId <=0){
+			throw new BusinessRuntimeException("无效的用户ID");
+		}
+		CustomerUser userCustomer = new CustomerUser();
+		userCustomer.setUserId(userId);
+		customerUserDAO.delete(userCustomer);
+	}
+
 
 }

@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.gopher.system.constant.CodeAndMsg;
@@ -32,7 +33,8 @@ public class UserServiceImpl implements UserService {
 	private CustomerService customerService;
 
 	@Override
-	public Integer insert(User user) {
+	@Transactional
+	public void insert(User user) {
 		if (user == null) {
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}
@@ -54,9 +56,18 @@ public class UserServiceImpl implements UserService {
 		} else {
 			user.setUserType(User.MANAGER);
 		}
-		return userDAO.insert(user);
+		user.setCreateUser(this.getCurrentUserId());
+		user.setUpdateUser(this.getCurrentUserId());
+		userDAO.insert(user);
+		final int userId = user.getId();
+		if (customerId > 0) {
+			CustomerUser customerUser = new CustomerUser();
+			customerUser.setCustomerId(customerId);
+			customerUser.setUserId(userId);
+			customerUserService.insert(customerUser);
+		}
 	}
-
+    @Transactional
 	@Override
 	public void update(User user) {
 		if (user == null) {
@@ -64,7 +75,6 @@ public class UserServiceImpl implements UserService {
 		}
 		final int id = user.getId();
 		final String account = user.getAccount();
-		final String password = user.getPassword();
 		final String name = user.getName();
 		if (id <= 0) {
 			throw new BusinessRuntimeException("ID不能都为空");
@@ -79,18 +89,21 @@ public class UserServiceImpl implements UserService {
 		if (!StringUtils.hasText(account)) {
 			throw new BusinessRuntimeException("账号不能为空");
 		}
-		if (!StringUtils.hasText(password)) {
-			throw new BusinessRuntimeException("密码不能为空");
-		}
 		if (!StringUtils.hasText(name)) {
 			throw new BusinessRuntimeException("用户名不能为空");
 		}
 		final int customerId = user.getCustomerId();
 		if (customerId > 0) {
+			customerUserService.deleteByUser(id);
+			CustomerUser customerUser = new CustomerUser();
+			customerUser.setCustomerId(customerId);
+			customerUser.setUserId(id);
+			customerUserService.insert(customerUser);
 			user.setUserType(User.CUSTOMER);
 		} else {
 			user.setUserType(User.MANAGER);
 		}
+		user.setUpdateUser(this.getCurrentUserId());
 		userDAO.update(user);
 	}
 
@@ -137,15 +150,16 @@ public class UserServiceImpl implements UserService {
 		}
 		userDAO.delete(id);
 	}
-	
-    private Customer getCustomerByUserId(int userId) {
-    	Customer result = null;
-    	CustomerUser customerUser = customerUserService.get(userId);
-    	if(null != customerUser) {
-    		result = customerService.findById(customerUser.getCustomerId());
-    	}
-    	return result;
-    }
+
+	private Customer getCustomerByUserId(int userId) {
+		Customer result = null;
+		CustomerUser customerUser = customerUserService.get(userId);
+		if (null != customerUser) {
+			result = customerService.findById(customerUser.getCustomerId());
+		}
+		return result;
+	}
+
 	@Override
 	public UserResponse getUserDetail(int id) {
 		if (id <= 0) {
@@ -154,13 +168,13 @@ public class UserServiceImpl implements UserService {
 		User user = new User();
 		user.setId(id);
 		user = userDAO.findOne(user);
-		if(user == null) {
+		if (user == null) {
 			throw new BusinessRuntimeException("根据ID找不到记录");
 		}
 		UserResponse result = new UserResponse();
 		BeanUtils.copyProperties(user, result);
 		Customer customer = getCustomerByUserId(id);
-		if(customer != null) {
+		if (customer != null) {
 			result.setCustomerId(customer.getId());
 			result.setCustomerName(customer.getName());
 		}
@@ -172,14 +186,14 @@ public class UserServiceImpl implements UserService {
 		userPageRequst.setCurrentLoginUser(this.getCurrentUserId());
 		List<User> list = userDAO.findPage(userPageRequst);
 		final int totalCount = userDAO.count(userPageRequst);
-		List<UserResponse> li  = null;
-		if(null != list && !list.isEmpty()) {
+		List<UserResponse> li = null;
+		if (null != list && !list.isEmpty()) {
 			li = new ArrayList<>(list.size());
 			for (User user : list) {
 				UserResponse rsp = new UserResponse();
 				BeanUtils.copyProperties(user, rsp);
 				Customer customer = this.getCustomerByUserId(user.getId());
-				if(null != customer) {
+				if (null != customer) {
 					rsp.setCustomerId(customer.getId());
 					rsp.setCustomerName(customer.getName());
 				}
