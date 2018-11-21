@@ -12,9 +12,18 @@ public interface CustomerCommodityGroupService {
 	public void update(CustomerCommodityGroupRequset customerCommodityGroupRequset);
 	
 	public CustomerCommodityGroupResponse get(int id);
-	
+	/**
+	 * 删除商品菜单
+	 * @param id
+	 */
 	public void delete(int id);
-	
+	/*
+	 * 获取对应客户的商品菜单
+	 */
 	public List<CustomerCommodityGroupResponse> getList(int customerId);
-
+    /**
+     * 获取当前登录用户对应客户的商品菜单
+     * @return
+     */
+	public List<CustomerCommodityGroupResponse> getList();
 }

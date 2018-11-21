@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
+import com.gopher.system.model.vo.response.OrderPageResponse;
 import com.gopher.system.service.CommodityService;
 import com.gopher.system.service.CustomerPriceService;
 import com.gopher.system.service.CustomerService;
@@ -217,24 +219,36 @@ public class OrderServiceImpl implements OrderService{
 		return this.getOrderDetail(orderId);
 	}
 	@Override
-	public Page<Order> getOrderPage(OrderPageRequst orderPageRequst) {
+	public Page<OrderPageResponse> getOrderPage(OrderPageRequst orderPageRequst) {
 		List<Order> list = orderDAO.findPage(orderPageRequst);
 		final int totalCount = orderDAO.count(orderPageRequst);
-		Page<Order> result = null;
+		Page<OrderPageResponse> result = null;
+		List<OrderPageResponse> li = null;
 		if(null != list) {
+			li = new ArrayList<>();
 			result = new Page<>();
 			for (Order order : list) {
+				OrderPageResponse rsp = new OrderPageResponse();
+				BeanUtils.copyProperties(order, rsp);
 				Customer customer = customerService.findById(order.getCustomerId());
 				if(null != customer) {
-					order.setCustomerName(customer.getName());
+					rsp.setCustomerName(customer.getName());
 				}
+				li.add(rsp);
 			}
-			result.setList(list);
+			result.setList(li);
 		}
 		result.setPageNumber(orderPageRequst.getPageNumber());
 		result.setPageSize(orderPageRequst.getPageSize());
 		result.setTotalCount(totalCount);
 		return result;
+	}
+
+	@Override
+	public void deleteByCustomerId(int customerId) {
+		Order query = new Order();
+		query.setCustomerId(customerId);
+		orderDAO.delete(query);
 	}
 
 }

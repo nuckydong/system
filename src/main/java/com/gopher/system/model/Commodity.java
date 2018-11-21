@@ -25,6 +25,18 @@ public class Commodity extends BaseModel{
 	private String unit;
 	@Transient
 	private int commodityId;
+	/**
+	 * 商品等级规格
+	 */
+	private int level;
+	
+	
+	public int getLevel() {
+		return level;
+	}
+	public void setLevel(int level) {
+		this.level = level;
+	}
 	public int getCommodityId() {
 		return super.getId();
 	}

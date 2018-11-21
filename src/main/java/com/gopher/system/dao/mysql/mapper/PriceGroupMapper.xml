@@ -76,6 +76,7 @@
 				AND number LIKE CONCAT('%',#{number},'%')
 			</if>
 		</where>
+		ORDER BY create_time DESC
 		limit #{skip},#{pageSize}
 	</select>
 

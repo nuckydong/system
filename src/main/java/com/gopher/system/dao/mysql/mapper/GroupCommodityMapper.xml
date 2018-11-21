@@ -7,10 +7,11 @@
 		type="com.gopher.system.model.GroupCommodity">
 		<result property="id" column="id" javaType="java.lang.Integer"
 			jdbcType="INTEGER" />
+		<result property="commodityId" column="commodity_id"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
 		<result property="groupId" column="group_id"
 			javaType="java.lang.Integer" jdbcType="INTEGER" />
-		<result property="updateUser" column="update_user"
-			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
 	</resultMap>
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"

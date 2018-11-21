@@ -23,6 +23,7 @@ import com.gopher.system.model.vo.request.CustomerRequst;
 import com.gopher.system.model.vo.response.CustomerResponse;
 import com.gopher.system.service.CustomerPriceService;
 import com.gopher.system.service.CustomerService;
+import com.gopher.system.service.OrderService;
 import com.gopher.system.service.PriceGroupService;
 import com.gopher.system.util.Page;
 
@@ -126,8 +127,11 @@ public class CustomerServiceImpl implements CustomerService {
 			}
 		}
 	}
-
+    @Autowired
+	private OrderService orderService;
+    
 	@Override
+	@Transactional
 	public void delete(int id) {
 		if (id <= 0) {
 			throw new BusinessRuntimeException("无效的ID");
@@ -139,6 +143,7 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.setState(State.INVALID.getState());
 			customerDAO.update(customer);
 		}
+		orderService.deleteByCustomerId(id);
 	}
 	@Autowired
 	private PriceGroupService priceGroupService;

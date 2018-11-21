@@ -80,6 +80,7 @@
 				AND customer_id = #{customerId}
 			</if>
 		</where>
+		ORDER BY create_time DESC
 	</select>
 
 	<select id="findPage"
@@ -88,8 +89,17 @@
 		SELECT * FROM `order`
 		<where>
 			state = 0
-			<if test="customerId >0 ">
+			<if test="customerId > 0 ">
 				AND customer_id = #{customerId}
+			</if>
+			<if test="startTime > 0">
+				AND create_time &gt;= #{startTime}
+			</if>
+			<if test="endTime > 0">
+				AND create_time &lt;= #{endTime}
+			</if>
+			<if test="number != null and number != ''">
+				AND number LIKE CONCAT('%',#{number},'%')
 			</if>
 		</where>
 		ORDER BY create_time DESC
@@ -102,10 +112,38 @@
 		SELECT COUNT(id) FROM `order`
 		<where>
 			state = 0
-			<if test="customerId >0 ">
+			<if test="customerId > 0 ">
 				AND customer_id = #{customerId}
+			</if>
+			<if test="startTime > 0">
+				AND create_time &gt;= #{startTime}
+			</if>
+			<if test="endTime > 0">
+				AND create_time &lt;= #{endTime}
+			</if>
+			<if test="number != null and number != ''">
+				AND number LIKE CONCAT('%',#{number},'%')
 			</if>
 		</where>
 	</select>
+
+	<update id="delete"
+		parameterType="com.gopher.system.model.Order">
+		UPDATE `order`
+		<set>
+			state = -1
+		</set>
+		<where>
+			<choose>
+				<when test="id > 0">
+					id = #{id}
+				</when>
+				<when test="customerId > 0">
+					customer_id = #{customerId}
+				</when>
+			</choose>
+
+		</where>
+	</update>
 
 </mapper>

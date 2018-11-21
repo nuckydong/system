@@ -38,17 +38,18 @@
 			name = #{name},
 			phone = #{phone},
 			wechat = #{wechat},
-			update_time =
-			now(),
+			update_time =now(),
 			update_user = #{updateUser}
 		</set>
 		<where>
-			<if test="account != null and account != '' ">
-				account = #{account}
-			</if>
-			<if test="id > 0 ">
-				id = #{id}
-			</if>
+			<choose>
+				<when test="account != null and account != '' ">
+					account = #{account}
+				</when>
+				<otherwise>
+					id = #{id}
+				</otherwise>
+			</choose>
 		</where>
 
 	</update>
@@ -91,7 +92,8 @@
 				)
 			</if>
 			<if test="customerId > 0">
-				AND id IN (SELECT user_id FROM customer_user WHERE customer_id =
+				AND id IN (SELECT user_id FROM customer_user WHERE
+				customer_id =
 				#{customerId})
 			</if>
 		</where>
@@ -115,7 +117,8 @@
 				)
 			</if>
 			<if test="customerId > 0">
-				AND id IN (SELECT user_id FROM customer_user WHERE customer_id =
+				AND id IN (SELECT user_id FROM customer_user WHERE
+				customer_id =
 				#{customerId})
 			</if>
 		</where>

@@ -19,6 +19,16 @@ public class CommodityResponse {
      private int price;
  	@Transient
  	private int commodityId;
+ 	
+ 	private int level;
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
 
 	public int getCommodityId() {
 		this.commodityId = this.id;

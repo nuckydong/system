@@ -1,5 +1,9 @@
 package com.gopher.system.model;
-
+/**
+ * 客户自定义分组对应的商品列表
+ * @author dongyangyang
+ *
+ */
 public class GroupCommodity {
 	
 	private int id;

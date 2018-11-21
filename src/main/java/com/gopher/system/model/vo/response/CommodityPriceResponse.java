@@ -11,6 +11,36 @@ public class CommodityPriceResponse {
 	private int priceGroupId;
 	
 	private String unit;
+	
+	private int level;
+	
+	private int commodityTypeId;
+	
+	private String commodityTypeName;
+
+	public int getLevel() {
+		return level;
+	}
+
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	public int getCommodityTypeId() {
+		return commodityTypeId;
+	}
+
+	public void setCommodityTypeId(int commodityTypeId) {
+		this.commodityTypeId = commodityTypeId;
+	}
+
+	public String getCommodityTypeName() {
+		return commodityTypeName;
+	}
+
+	public void setCommodityTypeName(String commodityTypeName) {
+		this.commodityTypeName = commodityTypeName;
+	}
 
 	public String getName() {
 		return name;

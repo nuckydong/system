@@ -6,6 +6,7 @@ import com.gopher.system.model.Order;
 import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
+import com.gopher.system.model.vo.response.OrderPageResponse;
 import com.gopher.system.util.Page;
 
 public interface OrderService{
@@ -19,7 +20,7 @@ public interface OrderService{
 	 * 订单分页列表
 	 * @return
 	 */
-	Page<Order> getOrderPage(OrderPageRequst orderPageRequst);
+	Page<OrderPageResponse> getOrderPage(OrderPageRequst orderPageRequst);
 	/**
 	 * 新增订单 
 	 * @param orderRequst
@@ -37,6 +38,9 @@ public interface OrderService{
 	 * @param id
 	 */
 	public void deleteOrder(int id);
+	
+	
+	public void deleteByCustomerId(int customerId);
 	/**
 	 * 编辑订单
 	 * @param orderRequst

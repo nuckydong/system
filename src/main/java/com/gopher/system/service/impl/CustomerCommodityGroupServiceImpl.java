@@ -11,11 +11,15 @@ import org.springframework.util.StringUtils;
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.dao.mysql.CustomerCommodityGroupDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
+import com.gopher.system.model.Commodity;
 import com.gopher.system.model.CustomerCommodityGroup;
+import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.GroupCommodity;
 import com.gopher.system.model.vo.request.CustomerCommodityGroupRequset;
 import com.gopher.system.model.vo.response.CustomerCommodityGroupResponse;
+import com.gopher.system.service.CommodityService;
 import com.gopher.system.service.CustomerCommodityGroupService;
+import com.gopher.system.service.CustomerUserService;
 import com.gopher.system.service.GroupCommodityService;
 import com.gopher.system.service.UserService;
 @Service
@@ -25,7 +29,11 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 	@Autowired
 	private UserService userService;
 	@Autowired
+	private CustomerUserService customerUserService;
+	@Autowired
 	private GroupCommodityService groupCommodityService;
+	@Autowired
+	private CommodityService commodityService;
 	
 	@Override
 	@Transactional
@@ -55,7 +63,7 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		customerCommodityGroup.setCustomerId(customerId);
 		customerCommodityGroup.setCreateUser(currentLoginUser);
 		customerCommodityGroup.setUpdateUser(currentLoginUser);
-		customerCommodityGroupDAO.add(customerCommodityGroup);
+		customerCommodityGroupDAO.insert(customerCommodityGroup);
 		final int groupId = customerCommodityGroup.getId();
 		List<Integer> commodityList = this.getCommodityIds(commodityIds);
 		if(null != commodityList) {
@@ -125,10 +133,34 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		
 	
 	}
-
+    
 	@Override
 	public CustomerCommodityGroupResponse get(int id) {
-		return null;
+		CustomerCommodityGroup  customerCommodityGroup = customerCommodityGroupDAO.findOne(id);
+		CustomerCommodityGroupResponse result = null;
+		if(null != customerCommodityGroup) {
+			result = new CustomerCommodityGroupResponse();
+			final int customerId = customerCommodityGroup.getCustomerId();
+			result.setId(id);
+			result.setCustomerId(customerId);
+			result.setName(customerCommodityGroup.getName());
+			result.setRemark(customerCommodityGroup.getRemark());
+			result.setSort(customerCommodityGroup.getSort());
+			List<GroupCommodity> list = groupCommodityService.getListByGroup(id);
+			List<Commodity> commodityList = null;
+			if(null != list && !list.isEmpty()) {
+				commodityList = new ArrayList<>(list.size());
+				for (GroupCommodity groupCommodity : list) {
+					Commodity commodity = commodityService.get(groupCommodity.getCommodityId());
+					if(commodity != null) {
+						commodityList.add(commodity);
+					}
+				}
+			}
+			result.setCommodityList(commodityList);
+		}
+		
+		return result;
 	}
     
 	@Override
@@ -140,11 +172,25 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 
 	@Override
 	public List<CustomerCommodityGroupResponse> getList(int customerId) {
-		CustomerCommodityGroup customerCommodityGroup = new CustomerCommodityGroup();
-		customerCommodityGroup.setCustomerId(customerId);
-		List<CustomerCommodityGroup>  list = customerCommodityGroupDAO.getList(customerCommodityGroup);
+		CustomerCommodityGroup query = new CustomerCommodityGroup();
+		query.setCustomerId(customerId);
+		List<CustomerCommodityGroup>  list = customerCommodityGroupDAO.findList(query);
+		List<CustomerCommodityGroupResponse> reuslt = null;
 		if(null != list) {
-			//TODO 
+			reuslt = new ArrayList<>(list.size());
+			for (CustomerCommodityGroup customerCommodityGroup : list) {
+				reuslt.add(this.get(customerCommodityGroup.getId()));
+			}
+		}
+		return reuslt;
+	}
+	
+	@Override
+	public List<CustomerCommodityGroupResponse> getList() {
+		final int user_id = userService.getCurrentUserId();
+		CustomerUser cu = customerUserService.get(user_id);
+		if(null != cu) {
+			return this.getList(cu.getCustomerId());
 		}
 		return null;
 	}

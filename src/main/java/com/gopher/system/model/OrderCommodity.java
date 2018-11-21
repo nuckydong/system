@@ -7,7 +7,7 @@ package com.gopher.system.model;
  *
  */
 public class OrderCommodity {
-	
+
 	private int id;
 	/**
 	 * 订单ID
@@ -30,11 +30,25 @@ public class OrderCommodity {
 	 */
 	private int amount;
 	/**
-	 * 实际数量
+	 * 发货数量
+	 */
+	private int sendAmount;
+	
+	private int customerCommodityGroupId;
+	
+	public int getSendAmount() {
+		return sendAmount;
+	}
+
+	public void setSendAmount(int sendAmount) {
+		this.sendAmount = sendAmount;
+	}
+
+	/**
+	 * 实际签收数量
 	 */
 	private int realAmount;
-	
-
+    
 	public int getRealAmount() {
 		return realAmount;
 	}
@@ -90,6 +104,5 @@ public class OrderCommodity {
 	public void setPrice(int price) {
 		this.price = price;
 	}
-
 
 }

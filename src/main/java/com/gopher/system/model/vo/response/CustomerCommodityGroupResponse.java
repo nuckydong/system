@@ -5,12 +5,19 @@ import java.util.List;
 import com.gopher.system.model.Commodity;
 
 public class CustomerCommodityGroupResponse {
+	private int id;
 	private String name;
 	private String remark;
 	private int sort;
 	private int customerId;
-	private int customerName;
 	private List<Commodity> commodityList;
+	
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
 	public String getName() {
 		return name;
 	}
@@ -34,12 +41,6 @@ public class CustomerCommodityGroupResponse {
 	}
 	public void setCustomerId(int customerId) {
 		this.customerId = customerId;
-	}
-	public int getCustomerName() {
-		return customerName;
-	}
-	public void setCustomerName(int customerName) {
-		this.customerName = customerName;
 	}
 	public List<Commodity> getCommodityList() {
 		return commodityList;

@@ -13,12 +13,12 @@ import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.constant.State;
 import com.gopher.system.dao.mysql.PriceGroupDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
-import com.gopher.system.model.Commodity;
 import com.gopher.system.model.CommodityPrice;
 import com.gopher.system.model.PriceGroup;
 import com.gopher.system.model.vo.request.PriceGroupPageRequst;
 import com.gopher.system.model.vo.request.PriceGroupRequest;
 import com.gopher.system.model.vo.response.CommodityPriceResponse;
+import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.PriceGroupResponse;
 import com.gopher.system.service.CommodityPriceService;
 import com.gopher.system.service.CommodityService;
@@ -134,7 +134,7 @@ public class PriceGroupServiceImpl implements PriceGroupService{
 		if(null != listDB) {
 			commodityPriceList = new ArrayList<>();
 			for (CommodityPrice commodityPrice : listDB) {
-				Commodity commodity = commodityService.get(commodityPrice.getCommodityId());
+				CommodityResponse commodity = commodityService.getCommodity(commodityPrice.getCommodityId());
 				if(null != commodity) {
 					CommodityPriceResponse rsp = new CommodityPriceResponse();
 					rsp.setPrice(commodityPrice.getPrice());
@@ -142,6 +142,9 @@ public class PriceGroupServiceImpl implements PriceGroupService{
 					rsp.setName(commodity.getName());
 					rsp.setCommodityId(commodity.getId());
 					rsp.setUnit(commodity.getUnit());
+					rsp.setLevel(commodity.getLevel());
+					rsp.setCommodityTypeId(commodity.getCommodityTypeId());
+					rsp.setCommodityTypeName(commodity.getCommodityTypeName());
 					commodityPriceList.add(rsp);
 				}
 			}

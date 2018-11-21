@@ -6,12 +6,14 @@ import com.gopher.system.model.CustomerCommodityGroup;
 
 public interface CustomerCommodityGroupDAO {
 	
-	void add(CustomerCommodityGroup customerCommodityGroup);
+	public void insert(CustomerCommodityGroup customerCommodityGroup);
 	
-	void update(CustomerCommodityGroup customerCommodityGroup);
+	public void update(CustomerCommodityGroup customerCommodityGroup);
 	
-	void delete(int id);
+	public CustomerCommodityGroup findOne(int id);
 	
-	List<CustomerCommodityGroup> getList(CustomerCommodityGroup customerCommodityGroup);
+	public void delete(int id);
+	
+	public List<CustomerCommodityGroup> findList(CustomerCommodityGroup customerCommodityGroup);
 
 }
