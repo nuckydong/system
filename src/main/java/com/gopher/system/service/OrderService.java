@@ -2,6 +2,8 @@ package com.gopher.system.service;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import com.gopher.system.model.Order;
 import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
@@ -49,7 +51,7 @@ public interface OrderService{
 	public OrderDetailResponse updateOrder(OrderRequst orderRequst);
 	
 	
-	public void exportOrder(int id);
+	public void exportOrder(int id,HttpServletResponse response);
 	
 
 }

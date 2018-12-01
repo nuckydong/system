@@ -1,5 +1,7 @@
 package com.gopher.system.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -47,6 +49,12 @@ public class OrderController{
 		return result;
 	}
 	
+	@GetMapping(path="/export")
+	public Result export(@RequestParam(name="id",defaultValue="0") int id,HttpServletResponse response) {
+		Result result = new Result();
+		orderService.exportOrder(id, response);
+		return result;
+	}
 	@GetMapping(path="/getList")
 	public Result getList() {
 		Result result = new Result();

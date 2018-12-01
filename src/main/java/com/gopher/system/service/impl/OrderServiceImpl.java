@@ -1,8 +1,24 @@
 package com.gopher.system.service.impl;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.poi.hssf.usermodel.HSSFCellStyle;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -35,6 +51,8 @@ import com.gopher.system.service.CustomerUserService;
 import com.gopher.system.service.OrderCommodityService;
 import com.gopher.system.service.OrderService;
 import com.gopher.system.service.UserService;
+import com.gopher.system.util.DateUtils;
+import com.gopher.system.util.MathUtils;
 import com.gopher.system.util.Page;
 
 @Service
@@ -55,6 +73,7 @@ public class OrderServiceImpl implements OrderService {
 	private CustomerService customerService;
 	@Autowired
 	private CustomerPriceService customerPriceService;
+
 	@Transactional
 	@Override
 	public void insert(OrderRequst orderRequst) {
@@ -167,7 +186,7 @@ public class OrderServiceImpl implements OrderService {
 					final int groupId = orderCommodity.getCustomerCommodityGroupId();
 					response.setCustomerCommodityGroupId(groupId);
 					CustomerCommodityGroupResponse group = customerCommodityGroupService.get(groupId);
-					if(null != group) {
+					if (null != group) {
 						response.setCustomerCommodityGroupName(group.getName());
 					}
 					commodityList.add(response);
@@ -266,8 +285,276 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
-	public void exportOrder(int id) {
+	/**
+	 * TODO 分组 和总计
+	 */
+	public void exportOrder(int id, HttpServletResponse response) {
+		OutputStream os = null;
+		try {
+			OrderDetailResponse rsp = this.getOrderDetail(id);
+			final String[] title = {"","","","","","","",""};
+			final String[] header_1 = { "订单号", "", "公司名称","", "日期", "", "联系电话", "" };
+			final String[] header_1_val = { "", "", "", "", "", "", "","" };
+			final String[] merge_1 = { "0,0,0,1", "0,0,2,3", "0,0,4,5", "0,0,6,7"};
+			final String[] header_2 = { "商品名称", "价格（元）", "单位", "种类", "订购数量", "发货数量", "签收数量","小计（元）"};
+			@SuppressWarnings("resource")
+			HSSFWorkbook wb = new HSSFWorkbook();
+			Sheet sheet = wb.createSheet();
+			sheet.setColumnWidth(0, 4 * 1000);
+			sheet.setColumnWidth(1, 4 * 1000);
+			sheet.setColumnWidth(2, 4 * 1000);
+			sheet.setColumnWidth(3, 4 * 1000);
+			sheet.setColumnWidth(4, 4 * 1000);
+			sheet.setColumnWidth(5, 4 * 1000);
+			sheet.setColumnWidth(6, 4 * 1000);
+			sheet.setColumnWidth(7, 4 * 1000);
+			// 表头标题样式
+			HSSFFont headfont = wb.createFont();
+			headfont.setFontName("宋体");
+			headfont.setFontHeightInPoints((short) 14);// 字体大小
+			HSSFCellStyle headstyle = wb.createCellStyle();
+			headstyle.setFont(headfont);
+			headstyle.setLocked(true);
+			headstyle.setAlignment(HorizontalAlignment.CENTER);// 创建一个居中格式
+			headstyle.setWrapText(true);// 自适应宽高
+
+			headstyle.setBorderLeft(BorderStyle.THIN);
+			headstyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+
+			headstyle.setBorderRight(BorderStyle.THIN);
+			headstyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+
+			headstyle.setBorderTop(BorderStyle.THIN);
+			headstyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+			
+			int row_number = 0;
+			Cell cell = null;
+			// 第一行标题
+			// 第一行标题合并 
+			sheet.addMergedRegion(new CellRangeAddress(row_number, row_number, 0, title.length-1));
+			Row row = sheet.createRow(row_number++);
+			row.setHeightInPoints(20f);
+			for (int i = 0; i < title.length; i++) {
+				cell = row.createCell(i);
+				cell.setCellValue(title[i]);
+				cell.setCellStyle(headstyle);
+			}
+			
+			//第二行标题合并
+			for (int i = 0; i < merge_1.length; i++) {
+				String[] temp = merge_1[i].split(",");
+				Integer startrow = row_number;
+				Integer overrow =  row_number;
+				Integer startcol = Integer.parseInt(temp[2]);
+				Integer overcol = Integer.parseInt(temp[3]);
+				sheet.addMergedRegion(new CellRangeAddress(startrow, overrow, startcol, overcol));
+			}
+			// 第二行标题
+			row = sheet.createRow(row_number++);
+			row.setHeightInPoints(20f);
+			for (int i = 0; i < header_1.length; i++) {
+				cell = row.createCell(i);
+				cell.setCellValue(header_1[i]);
+				cell.setCellStyle(headstyle);
+			}
+			
+			// 合并单元格 第三行标题
+			for (int i = 0; i < merge_1.length; i++) {
+				String[] temp = merge_1[i].split(",");
+				Integer startrow =row_number;
+				Integer overrow = row_number;
+				Integer startcol = Integer.parseInt(temp[2]);
+				Integer overcol = Integer.parseInt(temp[3]);
+				sheet.addMergedRegion(new CellRangeAddress(startrow, overrow, startcol, overcol));
+			}
+			
+			// 第三行标题
+			row = sheet.createRow(row_number++);
+			row.setHeightInPoints(20f);
+			String fileName = "";
+			if (null != rsp) {
+				for (int i = 0; i < header_1_val.length; i++) {
+					cell = row.createCell(i);
+					cell.setCellStyle(headstyle);
+					if (i == 0) {
+						cell.setCellValue(rsp.getNumber());
+					}
+					if (i == 2) {
+						cell.setCellValue(rsp.getCompany());
+					}
+					if (i == 4) {
+						cell.setCellValue(DateUtils.getDateTimeString(rsp.getCreateTime()));
+					}
+					if (i == 6) {
+						cell.setCellValue(rsp.getPhone());
+					}
+				}
+				fileName = rsp.getCompany() + "_" + rsp.getNumber();
+			} else {
+				for (int i = 0; i < header_1_val.length; i++) {
+					cell = row.createCell(i);
+					cell.setCellValue("");
+					cell.setCellStyle(headstyle);
+				}
+				fileName = "订单详情";
+			}
+			
+			
+			// 第四行标题
+			row = sheet.createRow(row_number++);
+			row.setHeightInPoints(20f);
+			// 底部边框 收底
+			headstyle.setBorderBottom(BorderStyle.THIN);
+			headstyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+			for (int i = 0; i < header_2.length; i++) {
+				cell = row.createCell(i);
+				cell.setCellValue(header_2[i]);
+				cell.setCellStyle(headstyle);
+			}
+			List<CommodityResponse> list = rsp.getCommodityList();
+			
+			if (null != list && !list.isEmpty()) {
+				final String[][] values = new String[list.size()][header_2.length];
+				int a = 0;
+				// {"商品名称","价格","单位","种类","订购数量","发货数量","签收数量"}
+				for (CommodityResponse com : list) {
+					values[a][0] = com.getName();
+					values[a][1] = MathUtils.divide(com.getPrice(), 100, 2) + "";
+					values[a][2] = com.getUnit();
+					values[a][3] = com.getCommodityTypeName();
+					values[a][4] = com.getAmount() + "";
+					values[a][5] = com.getSendAmount() + "";
+					values[a][6] = com.getRealAmount() + "";
+					values[a][7] = MathUtils.divide(com.getPrice()*com.getRealAmount() , 100, 2) + "";
+					a++;
+				}
+				// 创建内容
+				for (int i = 0; i < values.length; i++) {
+					row = sheet.createRow(row_number++);
+					for (int j = 0; j < values[i].length; j++) {
+						cell = row.createCell(j);
+						cell.setCellValue(values[i][j]);
+					}
+				}
+			}
+			setResponseHeader(response, fileName + ".xls");
+			os = response.getOutputStream();
+			wb.write(os);
+		} catch (Exception e) {
+			LOG.info("导出订单详情失败,{}", e);
+		} finally {
+			if (os != null) {
+				try {
+					os.flush();
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private static void setResponseHeader(HttpServletResponse response, String fileName) {
+		try {
+			try {
+				fileName = new String(fileName.getBytes(), "ISO8859-1");
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+			}
+			response.setContentType("application/octet-stream;charset=ISO8859-1");
+			response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+			response.addHeader("Pargam", "no-cache");
+			response.addHeader("Cache-Control", "no-cache");
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static void main(String[] args) throws Exception {
+
+		final String[] header_1 = { "订单号", "", "公司名称", "日期", "", "联系电话", "" };
+		final String[] header_1_val = { "", "", "", "", "", "", "" };
+		final String[] merge_1 = { "0,0,0,1", "0,0,3,4", "0,0,5,6", };
+		final String[] header_2 = { "商品名称", "价格", "单位", "种类", "订购数量", "发货数量", "签收数量" };
+		final String[][] values = new String[1][header_2.length];
+		FileOutputStream fos = new FileOutputStream("C:\\logs\\demo.xls");
+		@SuppressWarnings("resource")
+		HSSFWorkbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet();
+		sheet.setColumnWidth(0, 12 * 1000);
+		// 表头标题样式
+		HSSFFont headfont = wb.createFont();
+		headfont.setFontName("宋体");
+		headfont.setFontHeightInPoints((short) 14);// 字体大小
+		HSSFCellStyle headstyle = wb.createCellStyle();
+		headstyle.setFont(headfont);
+		headstyle.setAlignment(HorizontalAlignment.CENTER);// 创建一个居中格式
+		headstyle.setWrapText(true);// 自适应宽高
+		// 底部边框
+		headstyle.setBorderBottom(BorderStyle.THIN);
+		headstyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+
+		headstyle.setBorderLeft(BorderStyle.THIN);
+		headstyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+
+		headstyle.setBorderRight(BorderStyle.THIN);
+		headstyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+
+		headstyle.setBorderTop(BorderStyle.THIN);
+		headstyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
 		
+		// 动态合并单元格
+		for (int i = 0; i < merge_1.length; i++) {
+			String[] temp = merge_1[i].split(",");
+			Integer startrow = Integer.parseInt(temp[0]);
+			Integer overrow = Integer.parseInt(temp[1]);
+			Integer startcol = Integer.parseInt(temp[2]);
+			Integer overcol = Integer.parseInt(temp[3]);
+			sheet.addMergedRegion(new CellRangeAddress(startrow, overrow, startcol, overcol));
+		}
+		// 动态合并单元格
+		for (int i = 0; i < merge_1.length; i++) {
+			String[] temp = merge_1[i].split(",");
+			Integer startrow = Integer.parseInt(temp[0]) + 1;
+			Integer overrow = Integer.parseInt(temp[1]) + 1;
+			Integer startcol = Integer.parseInt(temp[2]);
+			Integer overcol = Integer.parseInt(temp[3]);
+			sheet.addMergedRegion(new CellRangeAddress(startrow, overrow, startcol, overcol));
+		}
+		// 第一行标题
+		Row row = sheet.createRow(0);
+		row.setHeightInPoints(20f);
+		Cell cell = null;
+		for (int i = 0; i < header_1.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(header_1[i]);
+			cell.setCellStyle(headstyle);
+		}
+		row = sheet.createRow(1);
+		row.setHeightInPoints(20f);
+		for (int i = 0; i < header_1_val.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(header_1[i] + "TODO");
+			cell.setCellStyle(headstyle);
+		}
+		// 第二行标题
+		row = sheet.createRow(2);
+		row.setHeightInPoints(20f);
+		for (int i = 0; i < header_2.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(header_2[i]);
+			cell.setCellStyle(headstyle);
+		}
+		// 创建内容
+		for (int i = 0; i < values.length; i++) {
+			row = sheet.createRow(i + 3);
+			for (int j = 0; j < values[i].length; j++) {
+				cell = row.createCell(j);
+				cell.setCellValue(values[i][j]);
+			}
+		}
+		wb.write(fos);
+		fos.close();
 	}
 
 }
