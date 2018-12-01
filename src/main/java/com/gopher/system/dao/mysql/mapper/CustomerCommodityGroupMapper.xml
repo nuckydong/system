@@ -45,9 +45,8 @@
 		<set>
 			name = #{name},
 			customer_id =#{customerId},
-			`sort` =#{sort}
-			remark =
-			#{remark},
+			`sort` =#{sort},
+			remark = #{remark},
 			update_user = #{updateUser},
 			update_time = now()
 		</set>

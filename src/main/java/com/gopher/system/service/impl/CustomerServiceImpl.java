@@ -143,6 +143,8 @@ public class CustomerServiceImpl implements CustomerService {
 			customer.setState(State.INVALID.getState());
 			customerDAO.update(customer);
 		}
+		// 同步删除客户对应得所有订单
+		// TODO 同步删除客户下对应的所有的用户
 		orderService.deleteByCustomerId(id);
 	}
 	@Autowired

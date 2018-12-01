@@ -1,8 +1,12 @@
 package com.gopher.system.service.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,18 +17,30 @@ import com.gopher.system.dao.mysql.CommodityDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.Commodity;
 import com.gopher.system.model.CommodityType;
+import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.vo.request.CommodityListRequst;
 import com.gopher.system.model.vo.request.CommodityPageRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
+import com.gopher.system.model.vo.response.CustomerCommodityGroupResponse;
 import com.gopher.system.service.CommodityService;
 import com.gopher.system.service.CommodityTypeService;
+import com.gopher.system.service.CustomerCommodityGroupService;
+import com.gopher.system.service.CustomerUserService;
+import com.gopher.system.service.UserService;
 import com.gopher.system.util.Page;
 @Service
 public class CommodityServiceImpl implements CommodityService{
+	private static final Logger LOG = LoggerFactory.getLogger(CommodityServiceImpl.class);
 	@Autowired
     private CommodityDAO commodityDAO;
 	@Autowired
 	private CommodityTypeService commodityTypeService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private CustomerUserService customerUserService;
+	@Autowired
+	private CustomerCommodityGroupService customerCommodityGroupService;
 	@Override
 	public Integer insert(Commodity commodity) {
 		if(null == commodity) {
@@ -55,6 +71,7 @@ public class CommodityServiceImpl implements CommodityService{
 		if(request != null) {
 			query.setCommodityTypeId(request.getCommodityTypeId());
 			query.setName(request.getName());
+			query.setLevel(request.getLevel());
 		}
 		List<Commodity> list = commodityDAO.findList(query);
 		List<CommodityResponse> result = null;
@@ -152,6 +169,37 @@ public class CommodityServiceImpl implements CommodityService{
 		final int totalCount = commodityDAO.count(commodityPageRequst);
 		result.setTotalCount(totalCount);
 		
+		return result;
+	}
+	@Override
+	public Set<CommodityResponse> getListNotInGroup() {
+		final int userId = userService.getCurrentUserId();
+		CustomerUser customerUser = customerUserService.get(userId);
+		List<CommodityResponse> li1 = new ArrayList<>();
+		Set<CommodityResponse> result = new HashSet<>();
+		if(null != customerUser) {
+			final int customerId = customerUser.getCustomerId();
+			List<CustomerCommodityGroupResponse>  li = customerCommodityGroupService.getList(customerId);
+			if(null != li) {
+				for (CustomerCommodityGroupResponse customerCommodityGroupResponse : li) {
+					List<CommodityResponse> list = customerCommodityGroupResponse.getCommodityList();
+					if(list != null && !list.isEmpty()) {
+						li1.addAll(list);
+					}
+				}
+			}
+		}
+		List<CommodityResponse>  allList = this.getCommodityList(new CommodityListRequst());
+		if(null != allList) {
+			for (CommodityResponse commodityResponse : allList) {
+				for (CommodityResponse commodityResponse2 : li1) {
+					if(commodityResponse.getId() == commodityResponse2.getId()) {
+						continue;
+					}
+					result.add(commodityResponse);
+				}
+			}
+		}
 		return result;
 	}
 

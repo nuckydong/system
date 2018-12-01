@@ -24,9 +24,11 @@ import com.gopher.system.model.User;
 import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
+import com.gopher.system.model.vo.response.CustomerCommodityGroupResponse;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
 import com.gopher.system.model.vo.response.OrderPageResponse;
 import com.gopher.system.service.CommodityService;
+import com.gopher.system.service.CustomerCommodityGroupService;
 import com.gopher.system.service.CustomerPriceService;
 import com.gopher.system.service.CustomerService;
 import com.gopher.system.service.CustomerUserService;
@@ -34,16 +36,17 @@ import com.gopher.system.service.OrderCommodityService;
 import com.gopher.system.service.OrderService;
 import com.gopher.system.service.UserService;
 import com.gopher.system.util.Page;
+
 @Service
-public class OrderServiceImpl implements OrderService{
-	
+public class OrderServiceImpl implements OrderService {
+
 	private static final Logger LOG = LoggerFactory.getLogger(OrderServiceImpl.class);
 	@Autowired
-    private OrderDAO orderDAO;
+	private OrderDAO orderDAO;
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private  OrderCommodityService orderCommodityService;
+	private OrderCommodityService orderCommodityService;
 	@Autowired
 	private CommodityService commodtityService;
 	@Autowired
@@ -51,30 +54,29 @@ public class OrderServiceImpl implements OrderService{
 	@Autowired
 	private CustomerService customerService;
 	@Autowired
-    private CustomerPriceService  customerPriceService;
-	
-    @Transactional
+	private CustomerPriceService customerPriceService;
+	@Transactional
 	@Override
 	public void insert(OrderRequst orderRequst) {
-		if(null == orderRequst){
+		if (null == orderRequst) {
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}
 		String commodityListJson = orderRequst.getCommodityListJson();
-		if(!StringUtils.hasText(commodityListJson)){
+		if (!StringUtils.hasText(commodityListJson)) {
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}
 		List<OrderCommodity> list = JSON.parseArray(commodityListJson, OrderCommodity.class);
-		if(list == null || list.isEmpty()){
+		if (list == null || list.isEmpty()) {
 			throw new BusinessRuntimeException("请选择商品");
 		}
 		Order order = new Order();
-		order.setNumber(System.currentTimeMillis()+"");
+		order.setNumber(System.currentTimeMillis() + "");
 		final int userId = userService.getCurrentUserId();
 		order.setCreateUser(userId);
 		order.setUpdateUser(userId);
 		order.setRemark(orderRequst.getRemark());
 		CustomerUser cu = customerUserService.get(userId);
-		if(null == cu){
+		if (null == cu) {
 			throw new BusinessRuntimeException("根据用户ID找不到对应的客户");
 		}
 		/**
@@ -82,46 +84,47 @@ public class OrderServiceImpl implements OrderService{
 		 */
 		order.setCustomerId(cu.getCustomerId());
 		orderDAO.insert(order);
-		LOG.info("新增订单成功：订单ID：{}",order.getId());
+		LOG.info("新增订单成功：订单ID：{}", order.getId());
 		// TODO 1 生成订单号,保存订单
-		//      2添加此次订单的商品到order_commodity表
+		// 2添加此次订单的商品到order_commodity表
 		for (OrderCommodity orderCommodity : list) {
 			orderCommodity.setOrderId(order.getId());
 			orderCommodityService.insert(orderCommodity);
 		}
-		
+
 	}
 
 	@Override
 	public List<Order> getOrderListByCurrentUser() {
 		Order order = new Order();
 		CustomerUser cu = customerUserService.get(userService.getCurrentUserId());
-		if(null == cu){
+		if (null == cu) {
 			throw new BusinessRuntimeException("根据用户ID找不到对应的客户");
 		}
 		order.setCustomerId(cu.getCustomerId());
 		return orderDAO.findList(order);
 	}
-	
-	
-    private String getUserName(int userId){
-    	User user = userService.getUerById(userId);
-    	String userName = "";
-    	if(null != user){
-    		userName = user.getName();
-    	}
-    	return userName;
-    }
-    
-    
+
+	private String getUserName(int userId) {
+		User user = userService.getUerById(userId);
+		String userName = "";
+		if (null != user) {
+			userName = user.getName();
+		}
+		return userName;
+	}
+
+	@Autowired
+	private CustomerCommodityGroupService customerCommodityGroupService;
+
 	@Override
 	public OrderDetailResponse getOrderDetail(int id) {
-		if(id <=0) {
+		if (id <= 0) {
 			throw new BusinessRuntimeException("无效的ID");
 		}
 		Order order = this.getOrder(id);
 		OrderDetailResponse result = null;
-		if(null != order) {
+		if (null != order) {
 			result = new OrderDetailResponse();
 			result.setId(order.getId());
 			result.setCreateTime(order.getCreateTime().getTime());
@@ -134,19 +137,21 @@ public class OrderServiceImpl implements OrderService{
 			/**
 			 * 当前客户使用的定价号
 			 */
-			//TODO 
+			// TODO
 			result.setPriceNumber(customerPriceService.getPriceNumberByCustomerId(customerId));
 			Customer customer = customerService.findById(customerId);
-			if(null != customer) {
+			if (null != customer) {
 				result.setCompany(customer.getName());
 				result.setPhone(customer.getMobilePhone());
 			}
 			result.setNumber(order.getNumber());
 			List<OrderCommodity> list = orderCommodityService.findList(id);
-			if(null != list) {
+			if (null != list) {
 				List<CommodityResponse> commodityList = new ArrayList<>(list.size());
 				for (OrderCommodity orderCommodity : list) {
 					final int commodityId = orderCommodity.getCommodityId();
+					final int sendAmount = orderCommodity.getSendAmount();
+					final int realAnount = orderCommodity.getRealAmount();
 					CommodityResponse response = new CommodityResponse();
 					response.setId(commodityId);
 					response.setCommodityId(commodityId);
@@ -157,6 +162,14 @@ public class OrderServiceImpl implements OrderService{
 					response.setPrice(orderCommodity.getPrice());
 					response.setUnit(orderCommodity.getUnit());
 					response.setAmount(orderCommodity.getAmount());
+					response.setRealAmount(realAnount);
+					response.setSendAmount(sendAmount);
+					final int groupId = orderCommodity.getCustomerCommodityGroupId();
+					response.setCustomerCommodityGroupId(groupId);
+					CustomerCommodityGroupResponse group = customerCommodityGroupService.get(groupId);
+					if(null != group) {
+						response.setCustomerCommodityGroupName(group.getName());
+					}
 					commodityList.add(response);
 				}
 				result.setCommodityList(commodityList);
@@ -167,7 +180,7 @@ public class OrderServiceImpl implements OrderService{
 
 	@Override
 	public void deleteOrder(int id) {
-		if(id <=0) {
+		if (id <= 0) {
 			throw new BusinessRuntimeException("无效的订单ID");
 		}
 		Order order = this.getOrder(id);
@@ -176,40 +189,40 @@ public class OrderServiceImpl implements OrderService{
 		orderDAO.update(order);
 		// 暂时不删除订单和商品的绑定关系表
 	}
-	
-    private Order getOrder(int orderId){
+
+	private Order getOrder(int orderId) {
 		Order order = new Order();
 		order.setId(orderId);
 		order = orderDAO.findOne(order);
-		if(null == order){
+		if (null == order) {
 			throw new BusinessRuntimeException("根据订单ID找不到订单信息");
 		}
 		return order;
-    }
-    
-    @Transactional
+	}
+
+	@Transactional
 	@Override
 	public OrderDetailResponse updateOrder(OrderRequst orderRequst) {
-		if(orderRequst == null) {
+		if (orderRequst == null) {
 			throw new BusinessRuntimeException("参数不能为空");
 		}
 		final int orderId = orderRequst.getId();
 		final String commodityListJson = orderRequst.getCommodityListJson();
-		if(!StringUtils.hasText(commodityListJson)){
+		if (!StringUtils.hasText(commodityListJson)) {
 			throw new BusinessRuntimeException("请选择商品");
 		}
-		if(orderId<=0){
+		if (orderId <= 0) {
 			throw new BusinessRuntimeException("无效的订单ID");
 		}
 		Order order = this.getOrder(orderId);
 		order.setRemark(orderRequst.getRemark());
 		order.setUpdateUser(userService.getCurrentUserId());
 		orderDAO.update(order);
-		//删除之前的关联
+		// 删除之前的关联
 		orderCommodityService.deleteByOrderId(orderId);
-		//建立新的订单商品关联
+		// 建立新的订单商品关联
 		List<OrderCommodity> list = JSON.parseArray(commodityListJson, OrderCommodity.class);
-		if(list == null || list.isEmpty()){
+		if (list == null || list.isEmpty()) {
 			throw new BusinessRuntimeException("请选择商品");
 		}
 		for (OrderCommodity orderCommodity : list) {
@@ -218,20 +231,21 @@ public class OrderServiceImpl implements OrderService{
 		}
 		return this.getOrderDetail(orderId);
 	}
+
 	@Override
 	public Page<OrderPageResponse> getOrderPage(OrderPageRequst orderPageRequst) {
 		List<Order> list = orderDAO.findPage(orderPageRequst);
 		final int totalCount = orderDAO.count(orderPageRequst);
 		Page<OrderPageResponse> result = null;
 		List<OrderPageResponse> li = null;
-		if(null != list) {
+		if (null != list) {
 			li = new ArrayList<>();
 			result = new Page<>();
 			for (Order order : list) {
 				OrderPageResponse rsp = new OrderPageResponse();
 				BeanUtils.copyProperties(order, rsp);
 				Customer customer = customerService.findById(order.getCustomerId());
-				if(null != customer) {
+				if (null != customer) {
 					rsp.setCustomerName(customer.getName());
 				}
 				li.add(rsp);
@@ -249,6 +263,11 @@ public class OrderServiceImpl implements OrderService{
 		Order query = new Order();
 		query.setCustomerId(customerId);
 		orderDAO.delete(query);
+	}
+
+	@Override
+	public void exportOrder(int id) {
+		
 	}
 
 }

@@ -33,9 +33,23 @@ public class OrderCommodity {
 	 * 发货数量
 	 */
 	private int sendAmount;
-	
+	/**
+	 * 客户商品分组ID
+	 */
 	private int customerCommodityGroupId;
-	
+	/**
+	 * 实际签收数量
+	 */
+	private int realAmount;
+
+	public int getCustomerCommodityGroupId() {
+		return customerCommodityGroupId;
+	}
+
+	public void setCustomerCommodityGroupId(int customerCommodityGroupId) {
+		this.customerCommodityGroupId = customerCommodityGroupId;
+	}
+
 	public int getSendAmount() {
 		return sendAmount;
 	}
@@ -44,11 +58,6 @@ public class OrderCommodity {
 		this.sendAmount = sendAmount;
 	}
 
-	/**
-	 * 实际签收数量
-	 */
-	private int realAmount;
-    
 	public int getRealAmount() {
 		return realAmount;
 	}

@@ -8,6 +8,7 @@ import com.gopher.system.model.Commodity;
 import com.gopher.system.model.vo.request.CommodityListRequst;
 import com.gopher.system.model.vo.request.CommodityPageRequst;
 import com.gopher.system.service.CommodityService;
+import com.gopher.system.util.ThreadLocalUtils;
 
 public class CommodityServiceTest extends BaseTest{
 	@Autowired
@@ -29,7 +30,11 @@ public class CommodityServiceTest extends BaseTest{
 		request.setName("土");
 		System.out.println(JSON.toJSONString(commodityService.getCommodityList(request)));
 	}
-	
+	@Test
+	public void getListNotInGroup() {
+		ThreadLocalUtils.setObject(ThreadLocalUtils.USER_KEY, 11);
+		System.out.println(JSON.toJSONString(commodityService.getListNotInGroup()));
+	}
 	@Test
 	public void getPage() {
 		CommodityPageRequst request  = new CommodityPageRequst();

@@ -15,4 +15,6 @@ public interface CommodityPriceService {
 	public CommodityPrice get(int id);
 
 	public List<CommodityPrice> getList(final int priceGroupId);
+	
+	public List<CommodityPrice> getListByCustomer(final int customerId);
 }

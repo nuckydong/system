@@ -21,6 +21,7 @@ public interface CustomerCommodityGroupService {
 	 * 获取对应客户的商品菜单
 	 */
 	public List<CustomerCommodityGroupResponse> getList(int customerId);
+	
     /**
      * 获取当前登录用户对应客户的商品菜单
      * @return

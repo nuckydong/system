@@ -53,6 +53,12 @@ public class CommodityController {
 		return result;
 	}
 	
+	@GetMapping(path="/getListNotInGroup")
+	public Result getListNotInGroup() {
+		Result result = new Result();
+		result.setData(commodityService.getListNotInGroup());
+		return result;
+	}
 	@GetMapping(path="/get")
 	public Result get(@RequestParam(name = "id",defaultValue="0") int id) {
 		Result result = new Result();

@@ -27,7 +27,11 @@ public class CustomerCommodityGroupServiceTest extends BaseTest{
 	public void getList() {
 		System.out.println(JSON.toJSONString(customerCommodityGroupService.getList(4)));
 	}
-	
+	@Test
+	public void getList2() {
+		ThreadLocalUtils.setObject(ThreadLocalUtils.USER_KEY, 11);
+		System.out.println(JSON.toJSONString(customerCommodityGroupService.getList()));
+	}
 	
 	@Test
 	public void delete() {

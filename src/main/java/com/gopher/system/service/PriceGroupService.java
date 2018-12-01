@@ -17,7 +17,7 @@ public interface PriceGroupService {
 	public void delete(int id);
 
 	public PriceGroup getPriceGroup(int id);
-
+	
 	public PriceGroupResponse get(int id);
 
 	/**

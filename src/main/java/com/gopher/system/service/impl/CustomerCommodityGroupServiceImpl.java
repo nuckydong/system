@@ -11,11 +11,11 @@ import org.springframework.util.StringUtils;
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.dao.mysql.CustomerCommodityGroupDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
-import com.gopher.system.model.Commodity;
 import com.gopher.system.model.CustomerCommodityGroup;
 import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.GroupCommodity;
 import com.gopher.system.model.vo.request.CustomerCommodityGroupRequset;
+import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.CustomerCommodityGroupResponse;
 import com.gopher.system.service.CommodityService;
 import com.gopher.system.service.CustomerCommodityGroupService;
@@ -147,12 +147,14 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 			result.setRemark(customerCommodityGroup.getRemark());
 			result.setSort(customerCommodityGroup.getSort());
 			List<GroupCommodity> list = groupCommodityService.getListByGroup(id);
-			List<Commodity> commodityList = null;
+			List<CommodityResponse> commodityList = null;
 			if(null != list && !list.isEmpty()) {
 				commodityList = new ArrayList<>(list.size());
 				for (GroupCommodity groupCommodity : list) {
-					Commodity commodity = commodityService.get(groupCommodity.getCommodityId());
+					CommodityResponse commodity = commodityService.getCommodity(groupCommodity.getCommodityId());
 					if(commodity != null) {
+						commodity.setCustomerCommodityGroupId(id);
+						commodity.setCustomerCommodityGroupName(customerCommodityGroup.getName());
 						commodityList.add(commodity);
 					}
 				}
@@ -169,7 +171,6 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		customerCommodityGroupDAO.delete(id);
 		groupCommodityService.deleteByGroup(id);
 	}
-
 	@Override
 	public List<CustomerCommodityGroupResponse> getList(int customerId) {
 		CustomerCommodityGroup query = new CustomerCommodityGroup();

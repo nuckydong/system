@@ -48,5 +48,8 @@ public interface OrderService{
 	 */
 	public OrderDetailResponse updateOrder(OrderRequst orderRequst);
 	
+	
+	public void exportOrder(int id);
+	
 
 }

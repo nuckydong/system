@@ -2,15 +2,13 @@ package com.gopher.system.model.vo.response;
 
 import java.util.List;
 
-import com.gopher.system.model.Commodity;
-
 public class CustomerCommodityGroupResponse {
 	private int id;
 	private String name;
 	private String remark;
 	private int sort;
 	private int customerId;
-	private List<Commodity> commodityList;
+	private List<CommodityResponse> commodityList;
 	
 	public int getId() {
 		return id;
@@ -42,10 +40,10 @@ public class CustomerCommodityGroupResponse {
 	public void setCustomerId(int customerId) {
 		this.customerId = customerId;
 	}
-	public List<Commodity> getCommodityList() {
+	public List<CommodityResponse> getCommodityList() {
 		return commodityList;
 	}
-	public void setCommodityList(List<Commodity> commodityList) {
+	public void setCommodityList(List<CommodityResponse> commodityList) {
 		this.commodityList = commodityList;
 	}
 	
