@@ -3,6 +3,7 @@ package com.gopher.system.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,17 +12,22 @@ import org.springframework.util.StringUtils;
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.dao.mysql.CustomerCommodityGroupDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
+import com.gopher.system.model.Commodity;
+import com.gopher.system.model.CommodityType;
 import com.gopher.system.model.CustomerCommodityGroup;
 import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.GroupCommodity;
 import com.gopher.system.model.vo.request.CustomerCommodityGroupRequset;
+import com.gopher.system.model.vo.request.GroupCommodityPageRequst;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.CustomerCommodityGroupResponse;
 import com.gopher.system.service.CommodityService;
+import com.gopher.system.service.CommodityTypeService;
 import com.gopher.system.service.CustomerCommodityGroupService;
 import com.gopher.system.service.CustomerUserService;
 import com.gopher.system.service.GroupCommodityService;
 import com.gopher.system.service.UserService;
+import com.gopher.system.util.Page;
 @Service
 public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroupService{
 	@Autowired
@@ -34,6 +40,8 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 	private GroupCommodityService groupCommodityService;
 	@Autowired
 	private CommodityService commodityService;
+	@Autowired
+	private CommodityTypeService commodityTypeService;
 	
 	@Override
 	@Transactional
@@ -64,16 +72,16 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		customerCommodityGroup.setCreateUser(currentLoginUser);
 		customerCommodityGroup.setUpdateUser(currentLoginUser);
 		customerCommodityGroupDAO.insert(customerCommodityGroup);
-		final int groupId = customerCommodityGroup.getId();
-		List<Integer> commodityList = this.getCommodityIds(commodityIds);
-		if(null != commodityList) {
-			for (Integer commodityId : commodityList) {
-				GroupCommodity groupCommodity = new GroupCommodity();
-				groupCommodity.setGroupId(groupId);
-				groupCommodity.setCommodityId(commodityId);
-				groupCommodityService.insert(groupCommodity);
-			}
-		}
+//		final int groupId = customerCommodityGroup.getId();
+//		List<Integer> commodityList = this.getCommodityIds(commodityIds);
+//		if(null != commodityList) {
+//			for (Integer commodityId : commodityList) {
+//				GroupCommodity groupCommodity = new GroupCommodity();
+//				groupCommodity.setGroupId(groupId);
+//				groupCommodity.setCommodityId(commodityId);
+//				groupCommodityService.insert(groupCommodity);
+//			}
+//		}
 		
 	}
     private List<Integer> getCommodityIds(String commodityIds){
@@ -89,7 +97,6 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
     }
 	@Override
 	public void update(CustomerCommodityGroupRequset customerCommodityGroupRequset) {
-
 		if(null == customerCommodityGroupRequset ) {
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}
@@ -119,19 +126,19 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		customerCommodityGroup.setCustomerId(customerId);
 		customerCommodityGroup.setUpdateUser(currentLoginUser);
 		customerCommodityGroupDAO.update(customerCommodityGroup);
-		// 清除之前的 重新添加
-		groupCommodityService.deleteByGroup(groupId);
-		List<Integer> commodityList = this.getCommodityIds(commodityIds);
-		if(null != commodityList) {
-			for (Integer commodityId : commodityList) {
-				GroupCommodity groupCommodity = new GroupCommodity();
-				groupCommodity.setGroupId(groupId);
-				groupCommodity.setCommodityId(commodityId);
-				groupCommodityService.insert(groupCommodity);
-			}
-		}
-		
-	
+//		if(StringUtils.hasText(commodityIds)) {
+//			groupCommodityService.deleteByGroup(groupId);
+//			List<Integer> commodityList = this.getCommodityIds(commodityIds);
+//			if(null != commodityList) {
+//				for (Integer commodityId : commodityList) {
+//					GroupCommodity groupCommodity = new GroupCommodity();
+//					groupCommodity.setGroupId(groupId);
+//					groupCommodity.setCommodityId(commodityId);
+//					groupCommodityService.insert(groupCommodity);
+//				}
+//			}
+//			
+//		}
 	}
     
 	@Override
@@ -195,5 +202,42 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		}
 		return null;
 	}
+	
+
+	@Override
+	public Page<CommodityResponse> getCommodityPage(GroupCommodityPageRequst groupCommodityPageRequst) {
+		final int groupId = groupCommodityPageRequst.getId();
+		CustomerCommodityGroup customerCommodityGroup = customerCommodityGroupDAO.findOne(groupId);
+		if(null == customerCommodityGroup) {
+			throw new BusinessRuntimeException("无效的分组ID");
+		}
+		final String groupName = customerCommodityGroup.getName();
+		final int pageSize = groupCommodityPageRequst.getPageSize();
+		final int pageNumber = groupCommodityPageRequst.getPageNumber();
+		
+		Page<CommodityResponse> page = new Page<CommodityResponse>();
+		List<Commodity> commodityList = customerCommodityGroupDAO.getPage(groupCommodityPageRequst);
+		final int totalCount = customerCommodityGroupDAO.getCount(groupCommodityPageRequst);
+		if(null != commodityList) {
+			List<CommodityResponse> list = new ArrayList<>();
+			for (Commodity commodity : commodityList) {
+				CommodityResponse cr = new CommodityResponse();
+				BeanUtils.copyProperties(commodity, cr);
+				CommodityType commodityType = commodityTypeService.getCommodityTypeById(commodity.getCommodityTypeId());
+				if (commodityType != null) {
+					cr.setCommodityTypeName(commodityType.getName());
+				}
+				cr.setCustomerCommodityGroupId(groupId);
+				cr.setCustomerCommodityGroupName(groupName);
+				list.add(cr);
+			}
+			page.setList(list);
+		}
+		page.setTotalCount(totalCount);
+		page.setPageNumber(pageNumber);
+		page.setPageSize(pageSize);
+		return page;
+	}
+
 
 }

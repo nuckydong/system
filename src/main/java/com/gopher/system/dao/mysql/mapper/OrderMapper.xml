@@ -19,6 +19,10 @@
 			javaType="java.lang.String" jdbcType="VARCHAR" />
 		<result property="customerId" column="customer_id"
 			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="send" column="send"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+		<result property="change" column="change"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
 	</resultMap>
 
 
@@ -29,16 +33,20 @@
 			state = #{state},
 			update_time = now(),
 			remark = #{remark},
-			update_user = #{updateUser}
+			update_user = #{updateUser},
+			`change` = #{change},
+			send = #{send}
 		</set>
 		<where>
 			state = 0
-			<if test="number != null and number != '' ">
-				AND number = #{number}
-			</if>
-			<if test="id > 0 ">
-				AND id = #{id}
-			</if>
+			<choose>
+				<when test="id > 0">
+					AND id = #{id}
+				</when>
+				<when test="number != null and number !=''">
+					AND number = #{number}
+				</when>
+			</choose>
 			<if test="customerId > 0">
 				AND customer_id = #{customerId}
 			</if>
@@ -49,9 +57,9 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
 		parameterType="com.gopher.system.model.Order">
 		INSERT INTO `order`
-		(number,remark,state,customer_id,create_user,update_user,create_time,update_time)
+		(number,remark,state,customer_id,create_user,update_user,create_time,update_time,send,`change`)
 		VALUES
-		(#{number},#{remark},#{state},#{customerId},#{createUser},#{updateUser},now(),now())
+		(#{number},#{remark},#{state},#{customerId},#{createUser},#{updateUser},now(),now(),#{send},#{change})
 	</insert>
 
 	<select id="findOne"
@@ -59,12 +67,14 @@
 		SELECT * FROM `order`
 		<where>
 			state = 0
-			<if test="number != null and number != '' ">
-				AND number = #{number}
-			</if>
-			<if test="id > 0 ">
-				AND id = #{id}
-			</if>
+			<choose>
+				<when test="id > 0">
+					AND id = #{id}
+				</when>
+				<when test="number != null and number !=''">
+					AND number = #{number}
+				</when>
+			</choose>
 		</where>
 	</select>
 
@@ -101,6 +111,18 @@
 			<if test="number != null and number != ''">
 				AND number LIKE CONCAT('%',#{number},'%')
 			</if>
+			<if test="change > 0">
+				AND `change` &gt; 0
+			</if>
+			<if test="change == 0">
+				AND `change` = 0
+			</if>
+			<if test="send > 0">
+				AND send &gt; 0
+			</if>
+			<if test="send == 0">
+				AND send = 0
+			</if>
 		</where>
 		ORDER BY create_time DESC
 		LIMIT #{beginIndex},#{pageSize}
@@ -124,6 +146,18 @@
 			<if test="number != null and number != ''">
 				AND number LIKE CONCAT('%',#{number},'%')
 			</if>
+			<if test="change > 0">
+				AND `change` &gt; 0
+			</if>
+			<if test="change == 0">
+				AND `change` = 0
+			</if>
+			<if test="send > 0">
+				AND send &gt; 0
+			</if>
+			<if test="send == 0">
+				AND send = 0
+			</if>
 		</where>
 	</select>
 
@@ -142,7 +176,6 @@
 					customer_id = #{customerId}
 				</when>
 			</choose>
-
 		</where>
 	</update>
 

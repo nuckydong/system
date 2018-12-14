@@ -1,6 +1,7 @@
 package com.gopher.system.service;
 
 import com.gopher.system.model.CustomerPrice;
+import com.gopher.system.model.vo.response.PriceGroupResponse;
 
 public interface CustomerPriceService {
 	/**
@@ -19,5 +20,7 @@ public interface CustomerPriceService {
 	public void delete(int id);
 	
 	public void update(CustomerPrice customerPrice);
+
+	PriceGroupResponse getPriceByCustomerId(int customerId);
 
 }

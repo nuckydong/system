@@ -53,8 +53,36 @@
 		resultMap="commodityMap">
 		SELECT * FROM commodity
 		<where>
-			id = #{id}
+			<choose>
+				<when test="id > 0 ">
+					id = #{id}
+				</when>
+				<otherwise>
+					<if test="name != null and name != '' and level > 0">
+						name = #{name}
+						AND
+						level = #{level}
+					</if>
+				</otherwise>
+
+			</choose>
+
 		</where>
+	</select>
+
+	<select id="findList2"
+		parameterType="com.gopher.system.model.Commodity"
+		resultMap="commodityMap">
+		SELECT * FROM commodity
+		<where>
+			<if test="name != null and name != '' ">
+				name = #{name}
+			</if>
+			<if test="level > 0">
+				AND level = #{level}
+			</if>
+		</where>
+		ORDER BY create_time DESC
 	</select>
 
 	<select id="findList"

@@ -61,17 +61,17 @@
 			id = #{id}
 		</where>
 	</select>
-	
+
 	<select id="findList"
 		parameterType="com.gopher.system.model.CommodityPrice"
 		resultMap="commodityPriceMap">
 		SELECT * FROM commodity_price
 		<where>
-				<if test="commodityId > 0">
+			<if test="commodityId > 0">
 				commodity_id = #{commodityId}
 			</if>
 			<if test="priceGroupId > 0">
-				price_group_id = #{priceGroupId}
+				AND price_group_id = #{priceGroupId}
 			</if>
 		</where>
 	</select>

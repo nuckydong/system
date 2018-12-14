@@ -30,6 +30,22 @@ public class Order extends BaseModel{
 	 */
 	private String remark;
 	
+	private int send;//订单是否已经发货
+	
+	private int change;// 订单是否被客户改变过
+	
+	public int getSend() {
+		return send;
+	}
+	public void setSend(int send) {
+		this.send = send;
+	}
+	public int getChange() {
+		return change;
+	}
+	public void setChange(int change) {
+		this.change = change;
+	}
 	public String getRemark() {
 		return remark;
 	}

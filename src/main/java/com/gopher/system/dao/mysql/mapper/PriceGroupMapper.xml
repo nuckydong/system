@@ -37,8 +37,7 @@
 			name = #{name},
 			number = #{number},
 			remark = #{remark},
-			state =
-			#{state},
+			state = #{state},
 			update_time = now(),
 			update_user = #{updateUser}
 		</set>
@@ -59,6 +58,9 @@
 			</if>
 			<if test="number  != null and number != ''">
 				AND number = #{number}
+			</if>
+			<if test="name  != null and name != ''">
+				AND name = #{name}
 			</if>
 		</where>
 	</select>
@@ -93,6 +95,58 @@
 				AND number LIKE CONCAT('%',#{number},'%')
 			</if>
 		</where>
+	</select>
+	
+	
+	<select id="getPage"
+		parameterType="com.gopher.system.model.vo.request.GroupCommodityPageRequst"
+		resultType="com.gopher.system.model.Commodity">
+		SELECT 
+		cp.id AS id,
+		como.id AS commodityId,
+		como.commodity_type_id AS commodityTypeId,
+		como.`level` AS `level`,
+		como.`name` AS `name`,
+		como.`unit` AS `unit`,
+		cp.price AS price
+		FROM commodity AS como
+		LEFT JOIN 
+		commodity_price AS cp
+		ON 
+		como.id = cp.commodity_id
+		WHERE cp.price_group_id = #{id}
+		<if test="commodityName != null and commodityName!=''">
+			AND name LIKE CONCAT('%',#{commodityName},'%')
+		</if>
+		<if test="commodityTypeId > 0 ">
+			AND commodity_type_id = #{commodityTypeId}
+		</if>
+		<if test="level > 0 ">
+			AND level = #{level}
+		</if>
+		ORDER BY cp.id DESC
+		limit #{beginIndex},#{pageSize}
+	</select>
+
+	<select id="getCount"
+		parameterType="com.gopher.system.model.vo.request.GroupCommodityPageRequst"
+		resultType="java.lang.Integer">
+		SELECT COUNT(como.id)
+		FROM commodity AS como
+		LEFT JOIN 
+		commodity_price AS cp
+		ON 
+		como.id = cp.commodity_id
+		WHERE cp.price_group_id = #{id}
+		<if test="commodityName != null and commodityName!=''">
+			AND name LIKE CONCAT('%',#{commodityName},'%')
+		</if>
+		<if test="commodityTypeId > 0 ">
+			AND commodity_type_id = #{commodityTypeId}
+		</if>
+		<if test="level > 0 ">
+			AND level = #{level}
+		</if>
 	</select>
 
 

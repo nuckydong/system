@@ -11,7 +11,11 @@ public class OrderRequst {
 	 * 备注、留言
 	 */
 	private String remark;
-
+	
+	private int send;
+	
+	private int change;
+	
 	private String commodityListJson;
 
 	private List<OrderCommodity> comodityList;
@@ -46,6 +50,22 @@ public class OrderRequst {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public int getSend() {
+		return send;
+	}
+
+	public void setSend(int send) {
+		this.send = send;
+	}
+
+	public int getChange() {
+		return change;
+	}
+
+	public void setChange(int change) {
+		this.change = change;
 	}
 
 }

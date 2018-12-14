@@ -22,17 +22,48 @@
 		(#{groupId},#{commodityId})
 	</insert>
 
-	<select id="getListByGroup"
-		parameterType="java.lang.Integer"
+	<update id="update"
+		parameterType="com.gopher.system.model.GroupCommodity">
+		UPDATE group_commodity
+		<set>
+			commodity_id = #{commodityId}
+		</set>
+		<where>
+			id = #{id}
+		</where>
+	</update>
+
+	<delete id="delete" parameterType="java.lang.Integer">
+		DELETE FROM group_commodity
+		WHERE id = #{id}
+	</delete>
+
+	<select id="getListByGroup" parameterType="java.lang.Integer"
 		resultMap="groupCommodityMap">
 		SELECT * FROM group_commodity
 		<where>
 			group_id =#{groupId}
 		</where>
 	</select>
+	
+	<select id="find" parameterType="com.gopher.system.model.GroupCommodity"
+		resultMap="groupCommodityMap">
+		SELECT * FROM group_commodity
+		<where>
+		<if test="groupId > 0" >
+		   group_id =#{groupId}
+		</if>
+		<if test="commodityId > 0" >
+		  AND commodity_id = #{commodityId}
+		</if>
+		</where>
+	</select>
 
 	<delete id="deleteByGroup" parameterType="java.lang.Integer">
-		DELETE FROM group_commodity WHERE group_id =#{groupId}
+		DELETE FROM
+		group_commodity WHERE group_id =#{groupId}
 	</delete>
+
+
 
 </mapper>

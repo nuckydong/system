@@ -118,15 +118,16 @@ public class CustomerServiceImpl implements CustomerService {
 		if (null != customerPriceDB) {
 			if (!Objects.equals(priceGroupId, customerPriceDB.getPriceGroupId())) {
 				customerPriceService.delete(customerPriceDB.getId());
-				if (priceGroupId > 0) {
-					CustomerPrice customerPrice = new CustomerPrice();
-					customerPrice.setCustomerId(customerId);
-					customerPrice.setPriceGroupId(priceGroupId);
-					customerPriceService.add(customerPrice);
-				}
 			}
 		}
+		if (priceGroupId > 0) {
+			CustomerPrice customerPrice = new CustomerPrice();
+			customerPrice.setCustomerId(customerId);
+			customerPrice.setPriceGroupId(priceGroupId);
+			customerPriceService.add(customerPrice);
+		}
 	}
+	
     @Autowired
 	private OrderService orderService;
     
@@ -175,7 +176,6 @@ public class CustomerServiceImpl implements CustomerService {
 					rsp.setPriceGroupName(pg.getName());
 					rsp.setPriceGroupNumber(pg.getNumber());
 				}
-				System.out.println(JSON.toJSONString(rsp));
 				li.add(rsp);
 			}
 			result.setList(li);

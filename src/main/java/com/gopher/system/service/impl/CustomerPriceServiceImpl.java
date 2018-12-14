@@ -8,6 +8,7 @@ import com.gopher.system.dao.mysql.CustomerPriceDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
 import com.gopher.system.model.CustomerPrice;
 import com.gopher.system.model.PriceGroup;
+import com.gopher.system.model.vo.response.PriceGroupResponse;
 import com.gopher.system.service.CustomerPriceService;
 import com.gopher.system.service.PriceGroupService;
 @Service
@@ -78,6 +79,17 @@ public class CustomerPriceServiceImpl implements CustomerPriceService{
 		}
 		return number;
 	}
+	
+	@Override
+	public PriceGroupResponse getPriceByCustomerId(int customerId) {
+		PriceGroupResponse result = null;
+		CustomerPrice customerPriceDB = this.getByCustomerId(customerId);
+		if(customerPriceDB != null) {
+			result = priceGroupService.get(customerPriceDB.getPriceGroupId());
+		}
+		return result;
+	}
+
 
 	@Override
 	public CustomerPrice getByCustomerId(int customerId) {

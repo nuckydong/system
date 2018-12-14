@@ -8,9 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.gopher.system.model.CommodityPrice;
+import com.gopher.system.model.vo.request.PriceCommodityPageRequest;
 import com.gopher.system.model.vo.request.PriceGroupPageRequst;
 import com.gopher.system.model.vo.request.PriceGroupRequest;
+import com.gopher.system.model.vo.response.CommodityResponse;
+import com.gopher.system.service.CommodityPriceService;
 import com.gopher.system.service.PriceGroupService;
+import com.gopher.system.util.Page;
+import com.gopher.system.util.ThreadLocalUtils;
 
 public class PriceGroupServiceTest extends BaseTest{
 	@Autowired
@@ -50,4 +55,36 @@ public class PriceGroupServiceTest extends BaseTest{
 		PriceGroupPageRequst priceGroupPageRequst = new PriceGroupPageRequst();
 		System.out.println(JSON.toJSONString(priveGroupService.getList(priceGroupPageRequst)));
 	}
+	
+	@Test
+	public void getCommodityPage() {
+		PriceCommodityPageRequest priceCommodityPageRequest= new PriceCommodityPageRequest();
+		priceCommodityPageRequest.setId(5);
+		priceCommodityPageRequest.setCommodityName("");
+		Page<CommodityResponse>  page = priveGroupService.getCommodityPage(priceCommodityPageRequest);
+		System.out.println(JSON.toJSONString(page));
+	}
+	@Autowired
+	private CommodityPriceService commodityPriceService;
+	
+	@Test
+	public void addCommodity() {
+		ThreadLocalUtils.setObject(ThreadLocalUtils.USER_KEY, 1);
+		CommodityPrice commodityPrice = new CommodityPrice();
+		commodityPrice.setCommodityId(8);
+		commodityPrice.setPriceGroupId(5);
+		commodityPrice.setPrice(200);
+		commodityPriceService.add(commodityPrice);
+	}
+	
+	
+	@Test
+	public void deleteCommodity() {
+		ThreadLocalUtils.setObject(ThreadLocalUtils.USER_KEY, 1);
+		CommodityPrice commodityPrice = new CommodityPrice();
+		commodityPrice.setId(11);
+		commodityPriceService.delete(commodityPrice);
+	}
+	
+
 }

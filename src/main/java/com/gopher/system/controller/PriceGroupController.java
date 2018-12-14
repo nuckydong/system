@@ -1,5 +1,7 @@
 package com.gopher.system.controller;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gopher.system.controller.model.Result;
+import com.gopher.system.model.vo.request.PriceCommodityPageRequest;
 import com.gopher.system.model.vo.request.PriceGroupPageRequst;
 import com.gopher.system.model.vo.request.PriceGroupRequest;
 import com.gopher.system.service.PriceGroupService;
@@ -47,10 +50,24 @@ public class PriceGroupController {
 		return result;
 	}
 	
+	@GetMapping(path="/export")
+	public Result export(HttpServletResponse response,@RequestParam(name="id",defaultValue="0") int id ){
+		Result result = new Result();
+		priceGroupService.export(response,id);
+		return result;
+	}
+	
 	@GetMapping(path="/getPage")
 	public Result getPage(PriceGroupPageRequst priceGroupPageRequst){
 		Result result = new Result();
 		result.setData(priceGroupService.getPage(priceGroupPageRequst));
+		return result;
+	}
+	
+	@GetMapping(path="/getCommodityPage")
+	public Result getCommodityPage(@ModelAttribute PriceCommodityPageRequest priceCommodityPageRequest) {
+		Result result = new Result();
+		result.setData(priceGroupService.getCommodityPage(priceCommodityPageRequest));
 		return result;
 	}
 	

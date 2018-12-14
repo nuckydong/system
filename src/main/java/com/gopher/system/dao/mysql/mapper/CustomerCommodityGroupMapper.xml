@@ -35,7 +35,8 @@
 	</insert>
 
 	<delete id="delete" parameterType="java.lang.Integer">
-		DELETE FROM customer_commodity_group
+		DELETE FROM
+		customer_commodity_group
 		WHERE id = #{id}
 	</delete>
 
@@ -46,7 +47,8 @@
 			name = #{name},
 			customer_id =#{customerId},
 			`sort` =#{sort},
-			remark = #{remark},
+			remark
+			= #{remark},
 			update_user = #{updateUser},
 			update_time = now()
 		</set>
@@ -55,12 +57,11 @@
 		</where>
 	</update>
 
-	<select id="findOne"
-		parameterType="java.lang.Integer"
+	<select id="findOne" parameterType="java.lang.Integer"
 		resultMap="customerCommodityGroupMap">
 		SELECT * FROM customer_commodity_group
 		<where>
-		 id = #{id}
+			id = #{id}
 		</where>
 	</select>
 
@@ -70,15 +71,63 @@
 		SELECT * FROM customer_commodity_group
 		<where>
 			<if test="name != null and name != '' ">
-				 name LIKE CONCAT('%',#{name},'%')
+				name LIKE CONCAT('%',#{name},'%')
 			</if>
 			<if test="customerId > 0">
-			   AND customer_id = #{customerId}
+				AND customer_id = #{customerId}
 			</if>
 		</where>
 		ORDER BY create_time DESC
 	</select>
 
+	<select id="getPage"
+		parameterType="com.gopher.system.model.vo.request.GroupCommodityPageRequst"
+		resultType="com.gopher.system.model.Commodity">
+		SELECT 
+		gc.id AS id,
+		como.id AS commodityId,
+		como.commodity_type_id AS commodityTypeId,
+		como.`level` AS `level`,
+		como.`name` AS `name`,
+		como.`unit` AS `unit`
+		FROM commodity AS como
+		LEFT JOIN 
+		group_commodity AS gc
+		ON 
+		como.id = gc.commodity_id
+		WHERE gc.group_id = #{id}
+		<if test="commodityName != null and commodityName!=''">
+			AND name LIKE CONCAT('%',#{commodityName},'%')
+		</if>
+		<if test="commodityTypeId > 0 ">
+			AND commodity_type_id = #{commodityTypeId}
+		</if>
+		<if test="level > 0 ">
+			AND level = #{level}
+		</if>
+		ORDER BY gc.id DESC
+		limit #{beginIndex},#{pageSize}
+	</select>
 
+	<select id="getCount"
+		parameterType="com.gopher.system.model.vo.request.GroupCommodityPageRequst"
+		resultType="java.lang.Integer">
+		SELECT COUNT(como.id)
+		FROM commodity AS como
+		LEFT JOIN 
+		group_commodity AS gc
+		ON 
+		como.id = gc.commodity_id
+		WHERE gc.group_id = #{id}
+		<if test="commodityName != null and commodityName!=''">
+			AND name LIKE CONCAT('%',#{commodityName},'%')
+		</if>
+		<if test="commodityTypeId > 0 ">
+			AND commodity_type_id = #{commodityTypeId}
+		</if>
+		<if test="level > 0 ">
+			AND level = #{level}
+		</if>
+	</select>
 
 </mapper>

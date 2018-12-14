@@ -32,6 +32,26 @@ public class OrderPageResponse {
     
 	private String customerName;
 	
+	private int send;
+	
+	private int change;
+	
+	public int getSend() {
+		return send;
+	}
+
+	public void setSend(int send) {
+		this.send = send;
+	}
+
+	public int getChange() {
+		return change;
+	}
+
+	public void setChange(int change) {
+		this.change = change;
+	}
+
 	public String getCustomerName() {
 		return customerName;
 	}

@@ -39,7 +39,21 @@ public class OrderDetailResponse {
 	private long updateTime;
 	private String updateUser;
 	private String createUser;
+	private int change;
+	private int send;
 	
+	public int getSend() {
+		return send;
+	}
+	public void setSend(int send) {
+		this.send = send;
+	}
+	public int getChange() {
+		return change;
+	}
+	public void setChange(int change) {
+		this.change = change;
+	}
 	public String getUpdateUser() {
 		return updateUser;
 	}

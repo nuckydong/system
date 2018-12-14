@@ -11,4 +11,6 @@ public interface CommodityDAO extends BaseDAO<Commodity>{
 	
 	int count(CommodityPageRequst commodityPageRequst);
 	
+	List<Commodity> findList2(Commodity commodity);
+	
 }

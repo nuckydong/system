@@ -10,6 +10,12 @@ public interface GroupCommodityDAO {
 	
 	void insert (GroupCommodity groupCommodity);
 	
+	void update (GroupCommodity groupCommodity);
+	
+	List<GroupCommodity> find(GroupCommodity groupCommodity);
+	
+	void delete(int id);
+	
 	List<GroupCommodity> getListByGroup(int groupId);
 
 }

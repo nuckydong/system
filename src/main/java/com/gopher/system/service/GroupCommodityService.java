@@ -10,5 +10,10 @@ public interface GroupCommodityService {
 	
 	void insert (GroupCommodity groupCommodity);
 	
+	void update (GroupCommodity groupCommodity);
+	
+	void delete (int id);
+	
 	List<GroupCommodity> getListByGroup(int groupId);
+
 }

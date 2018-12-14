@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gopher.system.controller.model.Result;
 import com.gopher.system.model.vo.request.CustomerCommodityGroupRequset;
+import com.gopher.system.model.vo.request.GroupCommodityPageRequst;
 import com.gopher.system.service.CustomerCommodityGroupService;
 
 @RestController
@@ -49,6 +50,12 @@ public class CustomerCommodityGroupController {
 		return result;
 	}
 	
+	@GetMapping(path="/getCommodityPage")
+	public Result getCommodityPage(@ModelAttribute GroupCommodityPageRequst groupCommodityPageRequst ) {
+		Result result = new Result();
+		result.setData(customerCommodityGroupService.getCommodityPage(groupCommodityPageRequst));
+		return result;
+	}
 	@GetMapping(path="/getListByCustomerLoginUser")
 	public Result getListByCustomerUser() {
 		Result result = new Result();

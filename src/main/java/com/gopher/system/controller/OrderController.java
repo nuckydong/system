@@ -42,6 +42,13 @@ public class OrderController{
 		return result;
 	}
 	
+	@PostMapping(path="/send")
+	public Result send(@RequestParam(name="id",defaultValue="0") int id) {
+		Result result = new Result();
+		orderService.sending(id);
+		return result;
+	}
+	
 	@GetMapping(path="/getDetail")
 	public Result getDetail(@RequestParam(name="id",defaultValue="0") int id) {
 		Result result = new Result();

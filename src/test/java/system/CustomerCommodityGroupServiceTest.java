@@ -5,7 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
 import com.gopher.system.model.vo.request.CustomerCommodityGroupRequset;
+import com.gopher.system.model.vo.request.GroupCommodityPageRequst;
+import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.service.CustomerCommodityGroupService;
+import com.gopher.system.util.Page;
 import com.gopher.system.util.ThreadLocalUtils;
 
 public class CustomerCommodityGroupServiceTest extends BaseTest{
@@ -37,6 +40,8 @@ public class CustomerCommodityGroupServiceTest extends BaseTest{
 	public void delete() {
 		customerCommodityGroupService.delete(1);
 	}
+	
+	
 
 
 }
