@@ -93,6 +93,17 @@
 		ORDER BY create_time DESC
 	</select>
 
+	<select id="findList4Statistic"
+		parameterType="com.gopher.system.model.Order" resultMap="orderMap">
+		SELECT * FROM `order`
+		<where>
+			state = 0
+			AND number &gt;= #{startDate}
+			AND number &lt;= #{endDate}
+		</where>
+		ORDER BY create_time DESC
+	</select>
+
 	<select id="findPage"
 		parameterType="com.gopher.system.model.vo.request.OrderPageRequst"
 		resultMap="orderMap">
@@ -103,10 +114,10 @@
 				AND customer_id = #{customerId}
 			</if>
 			<if test="startTime > 0">
-				AND create_time &gt;= #{startTime}
+				AND number &gt;= #{startTime}
 			</if>
 			<if test="endTime > 0">
-				AND create_time &lt;= #{endTime}
+				AND number &lt;= #{endTime}
 			</if>
 			<if test="number != null and number != ''">
 				AND number LIKE CONCAT('%',#{number},'%')
@@ -138,10 +149,10 @@
 				AND customer_id = #{customerId}
 			</if>
 			<if test="startTime > 0">
-				AND create_time &gt;= #{startTime}
+				AND number &gt;= #{startTime}
 			</if>
 			<if test="endTime > 0">
-				AND create_time &lt;= #{endTime}
+				AND number &lt;= #{endTime}
 			</if>
 			<if test="number != null and number != ''">
 				AND number LIKE CONCAT('%',#{number},'%')

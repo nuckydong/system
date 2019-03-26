@@ -26,7 +26,7 @@ public class PriceGroupController {
 	@PostMapping(path="/add")
 	public Result add(@ModelAttribute PriceGroupRequest priceGroupRequest){
 		Result result = new Result();
-		priceGroupService.add(priceGroupRequest);;
+		result.setData(priceGroupService.add(priceGroupRequest));
 		return result;
 	}
 	

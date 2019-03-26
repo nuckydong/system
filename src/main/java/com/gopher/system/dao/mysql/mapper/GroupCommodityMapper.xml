@@ -11,27 +11,36 @@
 			javaType="java.lang.Integer" jdbcType="INTEGER" />
 		<result property="groupId" column="group_id"
 			javaType="java.lang.Integer" jdbcType="INTEGER" />
-
+		<result property="price" column="price"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
 	</resultMap>
 
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
 		parameterType="com.gopher.system.model.GroupCommodity">
 		INSERT INTO group_commodity
-		(group_id,commodity_id)
+		(group_id,commodity_id,price)
 		VALUES
-		(#{groupId},#{commodityId})
+		(#{groupId},#{commodityId},#{price})
 	</insert>
 
 	<update id="update"
 		parameterType="com.gopher.system.model.GroupCommodity">
 		UPDATE group_commodity
 		<set>
-			commodity_id = #{commodityId}
+			price = #{price}
 		</set>
 		<where>
 			id = #{id}
 		</where>
 	</update>
+
+	<select id="findOne" parameterType="java.lang.Integer"
+		resultMap="groupCommodityMap">
+		SELECT * FROM group_commodity
+		<where>
+			id =#{id}
+		</where>
+	</select>
 
 	<delete id="delete" parameterType="java.lang.Integer">
 		DELETE FROM group_commodity
@@ -44,18 +53,20 @@
 		<where>
 			group_id =#{groupId}
 		</where>
+		ORDER BY id ASC
 	</select>
-	
-	<select id="find" parameterType="com.gopher.system.model.GroupCommodity"
+
+	<select id="find"
+		parameterType="com.gopher.system.model.GroupCommodity"
 		resultMap="groupCommodityMap">
 		SELECT * FROM group_commodity
 		<where>
-		<if test="groupId > 0" >
-		   group_id =#{groupId}
-		</if>
-		<if test="commodityId > 0" >
-		  AND commodity_id = #{commodityId}
-		</if>
+			<if test="groupId > 0">
+				group_id =#{groupId}
+			</if>
+			<if test="commodityId > 0">
+				AND commodity_id = #{commodityId}
+			</if>
 		</where>
 	</select>
 
@@ -63,7 +74,5 @@
 		DELETE FROM
 		group_commodity WHERE group_id =#{groupId}
 	</delete>
-
-
 
 </mapper>

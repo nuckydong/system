@@ -42,9 +42,9 @@ public class CustomerCommodityGroupController {
 		result.setData(customerCommodityGroupService.get(id));
 		return result;
 	}
-	
+	// TODO 前端给传的是id
 	@GetMapping(path="/getList")
-	public Result getList(@RequestParam (name = "customerId",defaultValue = "0") int customerId) {
+	public Result getList(@RequestParam (name = "id",defaultValue = "0") int customerId) {
 		Result result = new Result();
 		result.setData(customerCommodityGroupService.getList(customerId));
 		return result;

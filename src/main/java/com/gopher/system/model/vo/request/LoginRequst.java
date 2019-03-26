@@ -10,6 +10,15 @@ public class LoginRequst {
 	 */
 	private String password;
 	
+	private String application;
+	
+	public String getApplication() {
+		return application;
+	}
+
+	public void setApplication(String application) {
+		this.application = application;
+	}
 
 	public String getAccount() {
 		return account;

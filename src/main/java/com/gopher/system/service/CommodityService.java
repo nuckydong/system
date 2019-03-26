@@ -29,5 +29,5 @@ public interface CommodityService {
 	 * 获取不在当前客户预设分组中的商品
 	 * @return
 	 */
-	public Set<CommodityResponse> getListNotInGroup();
+	public Set<CommodityResponse> getListNotInGroup(Commodity comodity);
 }

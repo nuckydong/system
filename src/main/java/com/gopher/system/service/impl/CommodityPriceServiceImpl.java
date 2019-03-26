@@ -32,6 +32,21 @@ public class CommodityPriceServiceImpl implements CommodityPriceService{
 	public void update(CommodityPrice commodityPrice) {
 		commodityPriceDAO.update(commodityPrice);
 	}
+	
+	@Override
+	public void updatePrice(CommodityPrice commodityPrice) {
+		if(commodityPrice == null) {
+			throw new BusinessRuntimeException("参数不能为空");
+		}
+		final int id = commodityPrice.getId();
+		final int price = commodityPrice.getPrice();
+		CommodityPrice dbobj = commodityPriceDAO.findOne(id);
+		if(dbobj == null) {
+			throw new BusinessRuntimeException("无效的ID");
+		}
+		dbobj.setPrice(price);
+		commodityPriceDAO.update(dbobj);
+	}
 
 	@Override
 	public void delete(CommodityPrice commodityPrice) {

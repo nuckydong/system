@@ -41,6 +41,18 @@ public class OrderCommodity {
 	 * 实际签收数量
 	 */
 	private int realAmount;
+	/**
+	 * 商品是否是在打单后有变化的
+	 */
+	private int change;
+
+	public int getChange() {
+		return change;
+	}
+
+	public void setChange(int change) {
+		this.change = change;
+	}
 
 	public int getCustomerCommodityGroupId() {
 		return customerCommodityGroupId;

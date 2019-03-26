@@ -53,7 +53,6 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		final String name = customerCommodityGroupRequset.getName();
 		final int sort = customerCommodityGroupRequset.getSort();
 		final int customerId = customerCommodityGroupRequset.getCustomerId();
-		final String commodityIds = customerCommodityGroupRequset.getCommodityIds();
 		final String remark = customerCommodityGroupRequset.getRemark();
 		if(!StringUtils.hasText(name)) {
 			throw new BusinessRuntimeException("请输入名称");
@@ -72,29 +71,20 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		customerCommodityGroup.setCreateUser(currentLoginUser);
 		customerCommodityGroup.setUpdateUser(currentLoginUser);
 		customerCommodityGroupDAO.insert(customerCommodityGroup);
-//		final int groupId = customerCommodityGroup.getId();
-//		List<Integer> commodityList = this.getCommodityIds(commodityIds);
-//		if(null != commodityList) {
-//			for (Integer commodityId : commodityList) {
-//				GroupCommodity groupCommodity = new GroupCommodity();
-//				groupCommodity.setGroupId(groupId);
-//				groupCommodity.setCommodityId(commodityId);
-//				groupCommodityService.insert(groupCommodity);
-//			}
-//		}
-		
 	}
-    private List<Integer> getCommodityIds(String commodityIds){
-    	 List<Integer> result = null;
-    	if(StringUtils.hasText(commodityIds)) {
-    		String[] idstrs = commodityIds.split(",");
-    		result = new ArrayList<>();
-    		for (String idstr : idstrs) {
-    			result.add(Integer.valueOf(idstr));
-			}
-    	}
-    	return result;
-    }
+	
+//    private List<Integer> getCommodityIds(String commodityIds){
+//    	 List<Integer> result = null;
+//    	if(StringUtils.hasText(commodityIds)) {
+//    		String[] idstrs = commodityIds.split(",");
+//    		result = new ArrayList<>();
+//    		for (String idstr : idstrs) {
+//    			result.add(Integer.valueOf(idstr));
+//			}
+//    	}
+//    	return result;
+//    }
+    
 	@Override
 	public void update(CustomerCommodityGroupRequset customerCommodityGroupRequset) {
 		if(null == customerCommodityGroupRequset ) {
@@ -105,7 +95,6 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		final String name = customerCommodityGroupRequset.getName();
 		final int sort = customerCommodityGroupRequset.getSort();
 		final int customerId = customerCommodityGroupRequset.getCustomerId();
-		final String commodityIds = customerCommodityGroupRequset.getCommodityIds();
 		final String remark = customerCommodityGroupRequset.getRemark();
 		if(groupId <=0 ) {
 			throw new BusinessRuntimeException("ID不能为空");
@@ -126,19 +115,6 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 		customerCommodityGroup.setCustomerId(customerId);
 		customerCommodityGroup.setUpdateUser(currentLoginUser);
 		customerCommodityGroupDAO.update(customerCommodityGroup);
-//		if(StringUtils.hasText(commodityIds)) {
-//			groupCommodityService.deleteByGroup(groupId);
-//			List<Integer> commodityList = this.getCommodityIds(commodityIds);
-//			if(null != commodityList) {
-//				for (Integer commodityId : commodityList) {
-//					GroupCommodity groupCommodity = new GroupCommodity();
-//					groupCommodity.setGroupId(groupId);
-//					groupCommodity.setCommodityId(commodityId);
-//					groupCommodityService.insert(groupCommodity);
-//				}
-//			}
-//			
-//		}
 	}
     
 	@Override
@@ -162,6 +138,7 @@ public class CustomerCommodityGroupServiceImpl implements CustomerCommodityGroup
 					if(commodity != null) {
 						commodity.setCustomerCommodityGroupId(id);
 						commodity.setCustomerCommodityGroupName(customerCommodityGroup.getName());
+						commodity.setPrice(groupCommodity.getPrice());
 						commodityList.add(commodity);
 					}
 				}

@@ -14,7 +14,7 @@ import com.gopher.system.util.Page;
 
 public interface PriceGroupService {
 
-	public void add(PriceGroupRequest priceGroupRequest);
+	public int add(PriceGroupRequest priceGroupRequest);
 
 	public void update(PriceGroupRequest priceGroupRequest);
 

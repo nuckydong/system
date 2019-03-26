@@ -30,7 +30,7 @@ public class Order extends BaseModel{
 	 */
 	private String remark;
 	
-	private int send;//订单是否已经发货
+	private int send;//订单是否已经发货(打单)
 	
 	private int change;// 订单是否被客户改变过
 	

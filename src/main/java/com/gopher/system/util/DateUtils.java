@@ -58,10 +58,6 @@ public class DateUtils {
 		return result;
 	}
 
-	public static void main(String[] args) {
-		//TODO 
-	}
-
 	public static String getDateString(Date date) {
 		SimpleDateFormat sdf = new SimpleDateFormat(DATE_FMT);
 		return sdf.format(date);

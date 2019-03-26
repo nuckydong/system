@@ -117,6 +117,7 @@ public class AuthServiceImpl implements AuthService{
 		}
 		final String account = loginRequest.getAccount();
 		final String password = loginRequest.getPassword();
+		final String APPLICATION = loginRequest.getApplication();
 		if(!StringUtils.hasText(account)){
 			throw new BusinessRuntimeException("账号不能为空");
 		}
@@ -124,11 +125,15 @@ public class AuthServiceImpl implements AuthService{
 			throw new BusinessRuntimeException("密码不能为空");
 		}
 		User userDB = userService.getUserByAccount(account);
+		
 		if(null == userDB){
 			throw new BusinessRuntimeException("无效的账号,请检查账号后重新登录");
 		}
+		if(userDB.getUserType() == 1 && Objects.equals(APPLICATION, "web")) {
+			throw new BusinessRuntimeException("客户账号，禁止访问");
+		}
 		final String passwordDB = userDB.getPassword();
-		if(!Objects.equals(MD5Utils.MD5(password), passwordDB)){
+		if(!Objects.equals(password, passwordDB)){
 			throw new BusinessRuntimeException("账号或密码错误,请检查账号密码后重新登录");
 		}
 		LoginResponse response = new LoginResponse();

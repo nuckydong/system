@@ -29,9 +29,14 @@
 
 		<result property="realAmount" column="real_amount"
 			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
 		<result property="customerCommodityGroupId"
 			column="customer_commodity_group_id" javaType="java.lang.Integer"
 			jdbcType="INTEGER" />
+
+		<result property="change" column="change"
+			javaType="java.lang.Integer" jdbcType="INTEGER" />
+
 	</resultMap>
 
 
@@ -41,10 +46,13 @@
 		<set>
 			update_time = now(),
 			update_user = #{updateUser},
-			amount = #{amount},
+			amount =
+			#{amount},
 			send_amount = #{sendAmount},
 			real_amount = #{realAmount},
-			customer_commodity_group_id = #{customerCommodityGroupId}
+			`change` = #{change},
+			customer_commodity_group_id =
+			#{customerCommodityGroupId}
 		</set>
 		<where>
 			id = #{id}
@@ -67,9 +75,9 @@
 	<insert id="insert" useGeneratedKeys="true" keyProperty="id"
 		parameterType="com.gopher.system.model.OrderCommodity">
 		INSERT INTO order_commodity
-		(order_id,commodity_id,price,unit,amount,send_amount,real_amount,customer_commodity_group_id)
+		(order_id,commodity_id,price,unit,amount,send_amount,real_amount,customer_commodity_group_id,`change`)
 		VALUES
-		(#{orderId},#{commodityId},#{price},#{unit},#{amount},#{sendAmount},#{realAmount},#{customerCommodityGroupId})
+		(#{orderId},#{commodityId},#{price},#{unit},#{amount},#{sendAmount},#{realAmount},#{customerCommodityGroupId},#{change})
 	</insert>
 
 	<select id="findOne"

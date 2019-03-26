@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.gopher.system.model.Order;
 import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
+import com.gopher.system.model.vo.request.OrderStatisticRequest;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
 import com.gopher.system.model.vo.response.OrderPageResponse;
 import com.gopher.system.util.Page;
@@ -67,5 +68,12 @@ public interface OrderService {
 	public OrderDetailResponse updateOrder(OrderRequst orderRequst);
 
 	public void exportOrder(int id, HttpServletResponse response);
+
+	/**
+	 * 导出某一个日期的 订单商品的统计
+	 *
+	 * @param response
+	 */
+	public void exportOrder(OrderStatisticRequest orderStatisticRequest,HttpServletResponse response);
 
 }

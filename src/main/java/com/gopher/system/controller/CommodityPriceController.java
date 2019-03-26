@@ -23,6 +23,13 @@ public class CommodityPriceController {
 		return result;
 	} 
 	
+	@PostMapping(path="/updatePrice")
+	public Result updatePrice(@ModelAttribute CommodityPrice commodityPrice) {
+		Result result = new Result();
+		commodityPriceService.updatePrice(commodityPrice);
+		return result;
+	} 
+	
 	@PostMapping(path="/delete")
 	public Result delete(@ModelAttribute CommodityPrice commodityPrice) {
 		Result result = new Result();

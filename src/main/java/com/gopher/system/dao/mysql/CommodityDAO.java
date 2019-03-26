@@ -13,4 +13,6 @@ public interface CommodityDAO extends BaseDAO<Commodity>{
 	
 	List<Commodity> findList2(Commodity commodity);
 	
+	List<Commodity> findListNotInGroup(Commodity commodity);
+	
 }

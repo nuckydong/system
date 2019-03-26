@@ -79,7 +79,6 @@ public class CommodityServiceImpl implements CommodityService {
 		if (request != null) {
 			query.setCommodityTypeId(request.getCommodityTypeId());
 			query.setName(request.getName());
-			query.setLevel(request.getLevel());
 		}
 		List<Commodity> list = commodityDAO.findList(query);
 		List<CommodityResponse> result = null;
@@ -140,19 +139,17 @@ public class CommodityServiceImpl implements CommodityService {
 		final String unit = commodity.getUnit();
 		final int type = commodity.getCommodityTypeId();
 		final int price = commodity.getPrice();
-		final int level = commodity.getLevel();
 		Commodity commodityDB = commodityDAO.findOne(commodity);
-		if(commodityDB == null) {
+		if (commodityDB == null) {
 			throw new BusinessRuntimeException("无效的商品ID");
 		}
 		List<Commodity> list = commodityDAO.findList2(commodity);
-		if(Objects.equals(commodityDB.getLevel(), level) && 
-				(Objects.equals(commodityDB.getName(), name))) {
-			if(null != list && list.size()>=2) {
+		if (Objects.equals(commodityDB.getName(), name)) {
+			if (null != list && list.size() >= 2) {
 				throw new BusinessRuntimeException("商品重复，请检查后重新输入");
 			}
-		}else {
-			if(null != list && list.size()>=1) {
+		} else {
+			if (null != list && list.size() >= 1) {
 				throw new BusinessRuntimeException("商品重复，请检查后重新输入");
 			}
 		}
@@ -202,7 +199,9 @@ public class CommodityServiceImpl implements CommodityService {
 	}
 
 	@Override
-	public Set<CommodityResponse> getListNotInGroup() {
+	public Set<CommodityResponse> getListNotInGroup(Commodity commodity) {
+		final int type = commodity.getCommodityTypeId();
+		final String name = commodity.getName();
 		final int userId = userService.getCurrentUserId();
 		CustomerUser customerUser = customerUserService.get(userId);
 		List<CommodityResponse> li1 = new ArrayList<>();
@@ -225,6 +224,16 @@ public class CommodityServiceImpl implements CommodityService {
 				for (CommodityResponse commodityResponse2 : li1) {
 					if (commodityResponse.getId() == commodityResponse2.getId()) {
 						continue;
+					}
+					if (type != 0) {
+						if (commodityResponse.getCommodityTypeId() != type) {
+							continue;
+						}
+					}
+					if (StringUtils.hasText(name)) {
+						if (!commodityResponse.getName().contains(name)) {
+							continue;
+						}
 					}
 					result.add(commodityResponse);
 				}

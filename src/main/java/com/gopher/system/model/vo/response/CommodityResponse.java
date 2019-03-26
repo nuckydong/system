@@ -24,11 +24,19 @@ public class CommodityResponse {
  	@Transient
  	private int commodityId;
  	
- 	private int level;
- 	
  	private int customerCommodityGroupId;
  	
  	private String customerCommodityGroupName;
+ 	
+ 	private int change;
+
+	public int getChange() {
+		return change;
+	}
+
+	public void setChange(int change) {
+		this.change = change;
+	}
 
 	public int getSendAmount() {
 		return sendAmount;
@@ -60,14 +68,6 @@ public class CommodityResponse {
 
 	public void setCustomerCommodityGroupName(String customerCommodityGroupName) {
 		this.customerCommodityGroupName = customerCommodityGroupName;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
 	}
 
 	public int getCommodityId() {

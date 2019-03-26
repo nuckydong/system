@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gopher.system.controller.model.Result;
 import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
+import com.gopher.system.model.vo.request.OrderStatisticRequest;
 import com.gopher.system.service.OrderService;
 
 @RestController
@@ -62,6 +63,14 @@ public class OrderController{
 		orderService.exportOrder(id, response);
 		return result;
 	}
+	
+	@GetMapping(path="/exportStatistic")
+	public Result export(@ModelAttribute OrderStatisticRequest orderStatisticRequest,HttpServletResponse response) {
+		Result result = new Result();
+		orderService.exportOrder(orderStatisticRequest, response);
+		return result;
+	}
+	
 	@GetMapping(path="/getList")
 	public Result getList() {
 		Result result = new Result();

@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ThreadLocalUtils {
+	private HashMap<String,String> hash2;
 	public static final String USER_KEY="user";
+	public static final String APPLICATION ="application";
 	private ThreadLocalUtils() {
 
 	}

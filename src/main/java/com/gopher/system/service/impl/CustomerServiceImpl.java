@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import com.alibaba.fastjson.JSON;
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.constant.State;
 import com.gopher.system.dao.mysql.CustomerDAO;
@@ -41,12 +40,8 @@ public class CustomerServiceImpl implements CustomerService {
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}
 		final String namme = customerRequst.getName();
-		final String phone = customerRequst.getMobilePhone();
 		if (!StringUtils.hasText(namme)) {
 			throw new BusinessRuntimeException("名称不能为空");
-		}
-		if (!StringUtils.hasText(phone)) {
-			throw new BusinessRuntimeException("电话不能为空");
 		}
 		Customer customer = new Customer();
 		BeanUtils.copyProperties(customerRequst, customer);
@@ -106,9 +101,6 @@ public class CustomerServiceImpl implements CustomerService {
 		}
 		if (!StringUtils.hasText(namme)) {
 			throw new BusinessRuntimeException("名称不能为空");
-		}
-		if (!StringUtils.hasText(phone)) {
-			throw new BusinessRuntimeException("电话不能为空");
 		}
 		Customer customer = new Customer();
 		BeanUtils.copyProperties(customerRequst, customer);

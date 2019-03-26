@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import com.alibaba.fastjson.JSON;
 import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.constant.State;
 import com.gopher.system.dao.mysql.PriceGroupDAO;
@@ -72,7 +73,7 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 	 */
 	@Override
 	@Transactional
-	public void add(PriceGroupRequest priceGroupRequest) {
+	public int add(PriceGroupRequest priceGroupRequest) {
 		if (null == priceGroupRequest) {
 			throw new BusinessRuntimeException(CodeAndMsg.PARAM_NOT_NULL);
 		}
@@ -83,9 +84,6 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 		if (!StringUtils.hasText(name)) {
 			throw new BusinessRuntimeException("名称不能为空");
 		}
-//		if(!StringUtils.hasText(commodityListJson)) {
-//			throw new BusinessRuntimeException("商品定价列表不能为空");
-//		}
 		PriceGroup query = new PriceGroup();
 		query.setName(name);
 		PriceGroup pgDB = priceGroupDAO.findOne(query);
@@ -101,13 +99,16 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 		priceGroup.setCreateUser(userId);
 		priceGroup.setUpdateUser(userId);
 		final int priceGroupId = priceGroup.getId();
-//		List<CommodityPrice> list = JSON.parseArray(commodityListJson, CommodityPrice.class);
-//		if(null != list) {
-//			for (CommodityPrice commodityPrice : list) {
-//				commodityPrice.setPriceGroupId(priceGroupId);
-//				commodityPriceService.add(commodityPrice);
-//			}
-//		}
+		if(StringUtils.hasText(commodityListJson)) {
+			List<CommodityPrice> list = JSON.parseArray(commodityListJson, CommodityPrice.class);
+			if(null != list) {
+				for (CommodityPrice commodityPrice : list) {
+					commodityPrice.setPriceGroupId(priceGroupId);
+					commodityPriceService.add(commodityPrice);
+				}
+			}
+		}
+		return priceGroupId;
 	}
 
 	@Override
@@ -118,16 +119,12 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 		final int id = priceGroupRequest.getId();
 		final String name = priceGroupRequest.getName();
 		final String remark = priceGroupRequest.getRemark();
-		final String commodityListJson = priceGroupRequest.getCommodityPriceListJson();
 		if (id <= 0) {
 			throw new BusinessRuntimeException("ID不能为空");
 		}
 		if (!StringUtils.hasText(name)) {
 			throw new BusinessRuntimeException("名称不能为空");
 		}
-//		if(!StringUtils.hasText(commodityListJson)) {
-//			throw new BusinessRuntimeException("商品定价列表不能为空");
-//		}
 		PriceGroup priceGroup = new PriceGroup();
 		priceGroup.setId(id);
 		priceGroup = priceGroupDAO.findOne(priceGroup);
@@ -176,8 +173,9 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 		PriceGroup priceGroup = new PriceGroup();
 		priceGroup.setId(id);
 		priceGroup = priceGroupDAO.findOne(priceGroup);
+		
 		if (null == priceGroup) {
-			throw new BusinessRuntimeException("根据ID找不到对应的记录");
+			return null;
 		}
 		List<CommodityPriceResponse> commodityPriceList = null;
 		if (null != listDB) {
@@ -191,7 +189,6 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 					rsp.setName(commodity.getName());
 					rsp.setCommodityId(commodity.getId());
 					rsp.setUnit(commodity.getUnit());
-					rsp.setLevel(commodity.getLevel());
 					rsp.setCommodityTypeId(commodity.getCommodityTypeId());
 					rsp.setCommodityTypeName(commodity.getCommodityTypeName());
 					commodityPriceList.add(rsp);
@@ -329,8 +326,8 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 					map.put(type, sub);
 				}
 			}
-			final String[] title = { "", "", "", "", "", "" };
-			final String[] header = { "序号", "名称", "等级", "价格（元）", "单位", "分类" };
+			final String[] title = { "", "", "", "", "" };
+			final String[] header = { "序号", "名称", "价格（元）", "单位", "分类" };
 			@SuppressWarnings("resource")
 			HSSFWorkbook wb = new HSSFWorkbook();
 			Sheet sheet = wb.createSheet();
@@ -356,6 +353,10 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 
 			headstyle.setBorderTop(BorderStyle.THIN);
 			headstyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+			
+
+			headstyle.setBorderBottom(BorderStyle.THIN);
+			headstyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
 			// ================================================================================
 			HSSFFont bodyfont = wb.createFont();
 			bodyfont.setFontName("宋体");
@@ -375,6 +376,8 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 			bodystyle.setBorderTop(BorderStyle.THIN);
 			bodystyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
 
+			bodystyle.setBorderBottom(BorderStyle.THIN);
+			bodystyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
 			int row_number = 0;
 			Cell cell = null;
 			// 第一行标题
@@ -408,7 +411,7 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 					}
 					List<CommodityResponse> list = map.get(key);
 					if (null != list) {
-						// { "序号", "名称", "等级", "价格", "单位", "分类" };
+						// { "序号", "名称", "价格", "单位", "分类" };
 						int j = 1;
 						for (CommodityResponse comm : list) {
 							row = sheet.createRow(row_number++);
@@ -421,15 +424,12 @@ public class PriceGroupServiceImpl implements PriceGroupService {
 									cell.setCellValue(comm.getName());
 								}
 								if (i == 2) {
-									cell.setCellValue(comm.getLevel());
-								}
-								if (i == 3) {
 									cell.setCellValue(MathUtils.divide(comm.getPrice(), 100, 2));
 								}
-								if (i == 4) {
+								if (i == 3) {
 									cell.setCellValue(comm.getUnit());
 								}
-								if (i == 5) {
+								if (i == 4) {
 									cell.setCellValue(comm.getCommodityTypeName());
 								}
 								cell.setCellStyle(bodystyle);

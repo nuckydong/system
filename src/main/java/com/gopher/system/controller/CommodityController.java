@@ -54,9 +54,9 @@ public class CommodityController {
 	}
 	
 	@GetMapping(path="/getListNotInGroup")
-	public Result getListNotInGroup() {
+	public Result getListNotInGroup(@ModelAttribute Commodity commodity) {
 		Result result = new Result();
-		result.setData(commodityService.getListNotInGroup());
+		result.setData(commodityService.getListNotInGroup(commodity));
 		return result;
 	}
 	@GetMapping(path="/get")

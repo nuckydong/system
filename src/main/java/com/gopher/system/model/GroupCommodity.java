@@ -11,6 +11,16 @@ public class GroupCommodity {
 	private int groupId;
 	
 	private int commodityId;
+	
+	private int price;
+
+	public int getPrice() {
+		return price;
+	}
+
+	public void setPrice(int price) {
+		this.price = price;
+	}
 
 	public int getId() {
 		return id;

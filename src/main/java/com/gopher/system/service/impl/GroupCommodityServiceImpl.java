@@ -36,7 +36,16 @@ public class GroupCommodityServiceImpl implements GroupCommodityService {
 
 	@Override
 	public void update(GroupCommodity groupCommodity) {
-		groupCommodityDAO.update(groupCommodity);
+		final int id = groupCommodity.getId();
+		if(id <= 0) {
+			throw new BusinessRuntimeException("无效的ID");
+		}
+		GroupCommodity DBObj = groupCommodityDAO.findOne(id);
+		if(DBObj == null ) {
+			throw new BusinessRuntimeException("根据ID找不到记录");
+		}
+		DBObj.setPrice(groupCommodity.getPrice());
+		groupCommodityDAO.update(DBObj);
 	}
 
 	@Override

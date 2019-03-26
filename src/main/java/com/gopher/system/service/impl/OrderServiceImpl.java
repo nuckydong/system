@@ -35,6 +35,7 @@ import com.gopher.system.constant.CodeAndMsg;
 import com.gopher.system.constant.State;
 import com.gopher.system.dao.mysql.OrderDAO;
 import com.gopher.system.exception.BusinessRuntimeException;
+import com.gopher.system.model.Commodity;
 import com.gopher.system.model.Customer;
 import com.gopher.system.model.CustomerUser;
 import com.gopher.system.model.Order;
@@ -42,12 +43,11 @@ import com.gopher.system.model.OrderCommodity;
 import com.gopher.system.model.User;
 import com.gopher.system.model.vo.request.OrderPageRequst;
 import com.gopher.system.model.vo.request.OrderRequst;
-import com.gopher.system.model.vo.response.CommodityPriceResponse;
+import com.gopher.system.model.vo.request.OrderStatisticRequest;
 import com.gopher.system.model.vo.response.CommodityResponse;
 import com.gopher.system.model.vo.response.CustomerCommodityGroupResponse;
 import com.gopher.system.model.vo.response.OrderDetailResponse;
 import com.gopher.system.model.vo.response.OrderPageResponse;
-import com.gopher.system.model.vo.response.PriceGroupResponse;
 import com.gopher.system.service.CommodityService;
 import com.gopher.system.service.CustomerCommodityGroupService;
 import com.gopher.system.service.CustomerPriceService;
@@ -104,17 +104,6 @@ public class OrderServiceImpl implements OrderService {
 			throw new BusinessRuntimeException("根据用户ID找不到对应的客户");
 		}
 		final int customerId = cu.getCustomerId();
-		// 当前客户 当前的商品定价表
-		PriceGroupResponse priceGroup = customerPriceService.getPriceByCustomerId(customerId);
-		Map<Integer, Integer> priceMap = new HashMap<>();
-		if (null != priceGroup) {
-			List<CommodityPriceResponse> priceList = priceGroup.getCommodityPriceList();
-			if (null != priceList) {
-				for (CommodityPriceResponse comm : priceList) {
-					priceMap.put(comm.getCommodityId(), comm.getPrice());
-				}
-			}
-		}
 		/**
 		 * 当前订单的客户ID
 		 */
@@ -123,11 +112,6 @@ public class OrderServiceImpl implements OrderService {
 		LOG.info("新增订单成功：订单ID：{}", order.getId());
 		// 2添加此次订单的商品到order_commodity表
 		for (OrderCommodity orderCommodity : list) {
-			final int commodityId1 = orderCommodity.getCommodityId();
-			Integer price = priceMap.get(commodityId1);
-			if (null != price) {
-				orderCommodity.setPrice(price);
-			}
 			orderCommodity.setOrderId(order.getId());
 			orderCommodityService.insert(orderCommodity);
 		}
@@ -193,9 +177,14 @@ public class OrderServiceImpl implements OrderService {
 					final int commodityId = orderCommodity.getCommodityId();
 					final int sendAmount = orderCommodity.getSendAmount();
 					final int realAnount = orderCommodity.getRealAmount();
+					final int amount = orderCommodity.getAmount();
+					final int change = orderCommodity.getChange();
+					
 					CommodityResponse response = new CommodityResponse();
 					response.setId(commodityId);
 					response.setCommodityId(commodityId);
+					response.setAmount(amount);
+					response.setChange(change);
 					CommodityResponse rsp = commodtityService.getCommodity(commodityId);
 					response.setName(rsp.getName());
 					response.setCommodityTypeId(rsp.getCommodityTypeId());
@@ -259,21 +248,47 @@ public class OrderServiceImpl implements OrderService {
 		if (null == order) {
 			throw new BusinessRuntimeException("根据订单ID找不到对应的订单");
 		}
-		order.setChange(orderRequst.getChange());
-		order.setRemark(orderRequst.getRemark());
-		order.setUpdateUser(userService.getCurrentUserId());
-		orderDAO.update(order);
-		// 删除之前的关联
-		orderCommodityService.deleteByOrderId(orderId);
+		// 这个订单之前的商品
+		List<OrderCommodity> oldList = orderCommodityService.findList(orderId);
 		// 建立新的订单商品关联
-		List<OrderCommodity> list = JSON.parseArray(commodityListJson, OrderCommodity.class);
-		if (list == null || list.isEmpty()) {
+		List<OrderCommodity> newList = JSON.parseArray(commodityListJson, OrderCommodity.class);
+		if (newList == null || newList.isEmpty()) {
 			throw new BusinessRuntimeException("请选择商品");
 		}
-		for (OrderCommodity orderCommodity : list) {
-			orderCommodity.setOrderId(order.getId());
-			orderCommodityService.insert(orderCommodity);
+		if (order.getSend() == 1) {// 如果是已经打单的，判断修改的新的列表和旧的商品 有没有不同的地方
+			if (oldList == null || oldList.isEmpty()) {
+				for (OrderCommodity orderCommodity : newList) {
+					orderCommodity.setChange(1);
+				}
+			} else {
+				for (OrderCommodity newOne : newList) {
+					newOne.setChange(1);
+					for (OrderCommodity oldOne : oldList) {
+						if (newOne.getCommodityId() == oldOne.getCommodityId()
+								&& newOne.getAmount() == oldOne.getAmount()) {
+							newOne.setChange(0);
+							break;
+						}
+					}
+				}
+			}
 		}
+		// 删除之前的关联
+		orderCommodityService.deleteByOrderId(orderId);
+		boolean orderChanged = false;
+		for (OrderCommodity newOne : newList) {
+			if (newOne.getChange() != 0 && !orderChanged) {
+				orderChanged = true;
+			}
+			newOne.setOrderId(order.getId());
+			orderCommodityService.insert(newOne);
+		}
+		order.setRemark(orderRequst.getRemark());
+		order.setUpdateUser(userService.getCurrentUserId());
+		if (orderChanged) {
+			order.setChange(1);
+		}
+		orderDAO.update(order);
 		return this.getOrderDetail(orderId);
 	}
 
@@ -324,18 +339,18 @@ public class OrderServiceImpl implements OrderService {
 			final String[] header_1 = { "订单号", "", "公司名称", "", "日期", "", "联系电话", "" };
 			final String[] header_1_val = { "", "", "", "", "", "", "", "" };
 			final String[] merge_1 = { "0,0,0,1", "0,0,2,3", "0,0,4,5", "0,0,6,7" };
-			final String[] header_2 = { "商品名称", "价格（元）", "单位", "种类", "订购数量", "发货数量", "签收数量", "小计（元）" };
+			final String[] header_2 = { "序号", "商品名称", "价格（元）", "发货数量", "签收数量", "单位", "小计（元）","订购数量" };
+			final int col_len = header_2.length;
 			@SuppressWarnings("resource")
 			HSSFWorkbook wb = new HSSFWorkbook();
 			Sheet sheet = wb.createSheet();
-			sheet.setColumnWidth(0, common_column_width);
-			sheet.setColumnWidth(1, common_column_width);
-			sheet.setColumnWidth(2, common_column_width);
-			sheet.setColumnWidth(3, common_column_width);
-			sheet.setColumnWidth(4, common_column_width);
-			sheet.setColumnWidth(5, common_column_width);
-			sheet.setColumnWidth(6, common_column_width);
-			sheet.setColumnWidth(7, common_column_width);
+			for (int i = 0; i < col_len; i++) {
+				if (i == 0) {
+					sheet.setColumnWidth(i, 2 * 1000);
+				} else {
+					sheet.setColumnWidth(i, common_column_width);
+				}
+			}
 			// 表头标题样式
 			HSSFFont headfont = wb.createFont();
 			headfont.setFontName("宋体");
@@ -354,6 +369,29 @@ public class OrderServiceImpl implements OrderService {
 
 			headstyle.setBorderTop(BorderStyle.THIN);
 			headstyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+
+			headstyle.setBorderBottom(BorderStyle.THIN);
+			headstyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+			// ================================================================================
+			HSSFFont bodyfont = wb.createFont();
+			bodyfont.setFontName("宋体");
+			bodyfont.setFontHeightInPoints((short) 10);// 字体大小
+			HSSFCellStyle bodystyle = wb.createCellStyle();
+			bodystyle.setFont(bodyfont);
+			bodystyle.setLocked(true);
+			bodystyle.setAlignment(HorizontalAlignment.CENTER);// 创建一个居中格式
+			bodystyle.setWrapText(true);// 自适应宽高
+
+			bodystyle.setBorderLeft(BorderStyle.THIN);
+			bodystyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+
+			bodystyle.setBorderRight(BorderStyle.THIN);
+			bodystyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+
+			bodystyle.setBorderTop(BorderStyle.THIN);
+			bodystyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+			bodystyle.setBorderBottom(BorderStyle.THIN);
+			bodystyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
 
 			int row_number = 0;
 			Cell cell = null;
@@ -417,7 +455,7 @@ public class OrderServiceImpl implements OrderService {
 						cell.setCellValue(rsp.getPhone());
 					}
 				}
-				fileName = rsp.getCompany() + "_" + rsp.getNumber();
+				fileName = rsp.getCompany() + "_" +DateUtils.getDateString(rsp.getCreateTime());
 			} else {
 				for (int i = 0; i < header_1_val.length; i++) {
 					cell = row.createCell(i);
@@ -430,9 +468,6 @@ public class OrderServiceImpl implements OrderService {
 			// 第四行标题
 			row = sheet.createRow(row_number++);
 			row.setHeightInPoints(header_row_height_in_point);
-			// 底部边框 收底
-			headstyle.setBorderBottom(BorderStyle.THIN);
-			headstyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
 			for (int i = 0; i < header_2.length; i++) {
 				cell = row.createCell(i);
 				cell.setCellValue(header_2[i]);
@@ -458,25 +493,27 @@ public class OrderServiceImpl implements OrderService {
 			if (null != keys && !keys.isEmpty()) {
 				for (String groupName : keys) {
 					List<CommodityResponse> li = mapList.get(groupName);
-					sheet.addMergedRegion(new CellRangeAddress(row_number, row_number, 0, 7));
+					sheet.addMergedRegion(new CellRangeAddress(row_number, row_number, 0, col_len - 1));
 					row = sheet.createRow(row_number++);
-					for (int j = 0; j < 8; j++) {
+					for (int j = 0; j < col_len; j++) {
 						cell = row.createCell(j);
 						cell.setCellValue(groupName);
+						cell.setCellStyle(bodystyle);
 					}
 					if (null != li && !li.isEmpty()) {
-						final String[][] values = new String[list.size()][header_2.length];
+						final String[][] values = new String[li.size()][header_2.length];
 						int a = 0;
-						// {"商品名称","价格","单位","种类","订购数量","发货数量","签收数量"}
+						// { "序号", "商品名称", "价格（元）", "发货数量", "签收数量", "单位", "小计（元）","订购数量" };
+						// { "序号","商品名称", "价格（元）", "订购数量", "发货数量", "签收数量", "单位", "小计（元）" };
 						for (CommodityResponse com : li) {
-							values[a][0] = com.getName();
-							values[a][1] = MathUtils.divide(com.getPrice(), 100, 2) + "";
-							values[a][2] = com.getUnit();
-							values[a][3] = com.getCommodityTypeName();
-							values[a][4] = com.getAmount() + "";
-							values[a][5] = com.getSendAmount() + "";
-							values[a][6] = com.getRealAmount() + "";
-							values[a][7] = MathUtils.divide(com.getPrice() * com.getRealAmount(), 100, 2) + "";
+							values[a][0] = (a + 1) + "";
+							values[a][1] = com.getName();
+							values[a][2] = MathUtils.divide(com.getPrice(), 100, 2) + "";
+							values[a][3] = com.getSendAmount() + "";
+							values[a][4] =  "";
+							values[a][5] = com.getUnit();
+							values[a][6] = MathUtils.divide(com.getPrice() * com.getRealAmount(), 100, 2) + "";
+							values[a][7] = com.getAmount() + "";
 							a++;
 						}
 						// 创建内容
@@ -485,6 +522,7 @@ public class OrderServiceImpl implements OrderService {
 							for (int j = 0; j < values[i].length; j++) {
 								cell = row.createCell(j);
 								cell.setCellValue(values[i][j]);
+								cell.setCellStyle(bodystyle);
 							}
 						}
 					}
@@ -618,7 +656,160 @@ public class OrderServiceImpl implements OrderService {
 		}
 		order.setSend(1);
 		order.setUpdateUser(userService.getCurrentUserId());
-		orderDAO.update(order);		
+		orderDAO.update(order);
+	}
+
+	@Override
+	public void exportOrder(OrderStatisticRequest orderStatisticRequest, HttpServletResponse response) {
+		final String[] header = { "商品名称", "数量", "单位" };
+		final int common_column_width = 4 * 1000;
+		final float header_row_height_in_point = 20f;
+		@SuppressWarnings("resource")
+		HSSFWorkbook wb = new HSSFWorkbook();
+		Sheet sheet = wb.createSheet();
+		for (int i = 0; i < header.length; i++) {
+			if (i == 1) {
+				sheet.setColumnWidth(i, 8 * 1000);
+			} else {
+				sheet.setColumnWidth(i, common_column_width);
+			}
+		}
+		// 表头标题样式
+		HSSFFont headfont = wb.createFont();
+		headfont.setFontName("宋体");
+		headfont.setFontHeightInPoints((short) 14);// 字体大小
+		HSSFCellStyle headstyle = wb.createCellStyle();
+		headstyle.setFont(headfont);
+		headstyle.setLocked(true);
+		headstyle.setAlignment(HorizontalAlignment.CENTER);// 创建一个居中格式
+		headstyle.setWrapText(true);// 自适应宽高
+
+		headstyle.setBorderLeft(BorderStyle.THIN);
+		headstyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+
+		headstyle.setBorderRight(BorderStyle.THIN);
+		headstyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+
+		headstyle.setBorderTop(BorderStyle.THIN);
+		headstyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+
+		headstyle.setBorderBottom(BorderStyle.THIN);
+		headstyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+		// ================================================================================
+		HSSFFont bodyfont = wb.createFont();
+		bodyfont.setFontName("宋体");
+		bodyfont.setFontHeightInPoints((short) 10);// 字体大小
+		HSSFCellStyle bodystyle = wb.createCellStyle();
+		bodystyle.setFont(bodyfont);
+		bodystyle.setLocked(true);
+		bodystyle.setAlignment(HorizontalAlignment.CENTER);// 创建一个居中格式
+		bodystyle.setWrapText(true);// 自适应宽高
+
+		bodystyle.setBorderLeft(BorderStyle.THIN);
+		bodystyle.setLeftBorderColor(IndexedColors.BLACK.getIndex());
+
+		bodystyle.setBorderRight(BorderStyle.THIN);
+		bodystyle.setRightBorderColor(IndexedColors.BLACK.getIndex());
+
+		bodystyle.setBorderTop(BorderStyle.THIN);
+		bodystyle.setTopBorderColor(IndexedColors.BLACK.getIndex());
+		bodystyle.setBorderBottom(BorderStyle.THIN);
+		bodystyle.setBottomBorderColor(IndexedColors.BLACK.getIndex());
+
+		int row_number = 0;
+		Cell cell = null;
+		// 第一行标题
+		Row row = sheet.createRow(row_number++);
+		row.setHeightInPoints(header_row_height_in_point);
+		for (int i = 0; i < header.length; i++) {
+			cell = row.createCell(i);
+			cell.setCellValue(header[i]);
+			cell.setCellStyle(headstyle);
+		}
+		List<Order> list = orderDAO.findList4Statistic(orderStatisticRequest);
+		LOG.info("订单列表：{}",JSON.toJSONString(list));
+		List<OrderCommodity> all = new ArrayList<>();
+		if (null != list) {
+			for (Order order : list) {
+				List<OrderCommodity> commodityList = orderCommodityService.findList(order.getId());
+				all.addAll(commodityList);
+			}
+		}
+		LOG.info("商品列表：{}",JSON.toJSONString(list));
+		// 商品对应的数量 总和
+		Map<Integer, Integer> commodityNum = new HashMap<>();
+		// 商品对应的数量 详细
+		Map<Integer, String> commodityNumDetail = new HashMap<>();
+		if (!all.isEmpty()) {
+			for (OrderCommodity orderCommodity : all) {
+				final Integer commodityId = orderCommodity.getCommodityId();
+				final Integer amount = orderCommodity.getAmount();
+				Integer num = commodityNum.get(commodityId);
+				String detail = commodityNumDetail.get(commodityId);
+				if (num != null) {
+					num += amount;
+				} else {
+					num = amount;
+				}
+				if (StringUtils.hasText(detail)) {
+					detail += ("+" + amount);
+				} else {
+					detail = amount + "";
+				}
+				commodityNum.put(commodityId, num);
+				commodityNumDetail.put(commodityId, detail);
+			}
+		}
+		Set<Integer> keys = commodityNumDetail.keySet();
+		if (!keys.isEmpty()) {
+			for (Integer key : keys) {
+				Commodity commodity = commodtityService.get(key);
+				if(commodity == null) {
+					continue;
+				}
+				final String name = commodity.getName();
+				final String unit = commodity.getUnit();
+				final Integer total = commodityNum.get(key);
+				final String str = commodityNumDetail.get(key);
+				row = sheet.createRow(row_number++);
+				row.setHeightInPoints(header_row_height_in_point);
+				for (int i = 0; i < header.length; i++) {
+					cell = row.createCell(i);
+					if (i == 0) {
+						cell.setCellValue(name);
+					}
+					if (i == 1) {
+						if(str.contains("+")) {
+							cell.setCellValue(str + "=" + total);
+						}else {
+							cell.setCellValue(total);
+						}
+						
+					}
+					if (i == 2) {
+						cell.setCellValue(unit);
+					}
+					cell.setCellStyle(bodystyle);
+				}
+			}
+		}
+		setResponseHeader(response, "订单统计" + ".xls");
+		OutputStream os = null;
+		try {
+			os = response.getOutputStream();
+			wb.write(os);
+		} catch (Exception e) {
+			LOG.info("导出订单详情失败,{}", e);
+		} finally {
+			if (os != null) {
+				try {
+					os.flush();
+					os.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 }

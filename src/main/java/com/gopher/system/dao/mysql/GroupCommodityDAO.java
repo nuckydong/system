@@ -13,7 +13,7 @@ public interface GroupCommodityDAO {
 	void update (GroupCommodity groupCommodity);
 	
 	List<GroupCommodity> find(GroupCommodity groupCommodity);
-	
+	GroupCommodity findOne(int id);
 	void delete(int id);
 	
 	List<GroupCommodity> getListByGroup(int groupId);

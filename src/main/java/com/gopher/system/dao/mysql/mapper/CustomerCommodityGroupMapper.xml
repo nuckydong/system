@@ -85,6 +85,7 @@
 		resultType="com.gopher.system.model.Commodity">
 		SELECT 
 		gc.id AS id,
+		gc.price AS price,
 		como.id AS commodityId,
 		como.commodity_type_id AS commodityTypeId,
 		como.`level` AS `level`,
@@ -105,7 +106,7 @@
 		<if test="level > 0 ">
 			AND level = #{level}
 		</if>
-		ORDER BY gc.id DESC
+		ORDER BY gc.id ASC
 		limit #{beginIndex},#{pageSize}
 	</select>
 

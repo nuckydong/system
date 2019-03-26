@@ -33,7 +33,7 @@ public class CommodityServiceTest extends BaseTest{
 	@Test
 	public void getListNotInGroup() {
 		ThreadLocalUtils.setObject(ThreadLocalUtils.USER_KEY, 11);
-		System.out.println(JSON.toJSONString(commodityService.getListNotInGroup()));
+		System.out.println(JSON.toJSONString(commodityService.getListNotInGroup(new Commodity())));
 	}
 	@Test
 	public void getPage() {

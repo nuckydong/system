@@ -24,6 +24,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 		httpServletResponse.setCharacterEncoding("UTF-8");
 		
 		final String TOKEN = httpServletRequest.getParameter("token");
+		final String APPLICATION = httpServletRequest.getParameter("application");
 		if (!StringUtils.hasText(TOKEN)) {
 			// 没有传token
 			httpServletResponse.getWriter().write(JSON.toJSONString(new Result(-1, "您还没有登录,请登录", false)));
@@ -44,6 +45,8 @@ public class LoginInterceptor implements HandlerInterceptor {
 		 * 当前用户
 		 */
 		ThreadLocalUtils.setObject(ThreadLocalUtils.USER_KEY, user_id);
+		//当前所发送的请求的客户端类型(app,web)
+		ThreadLocalUtils.setObject(ThreadLocalUtils.APPLICATION, APPLICATION);
 		return true;
 	}
 
